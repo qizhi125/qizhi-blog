@@ -1,0 +1,7 @@
+baseURL = 'https://qizhi1215.com/'
+languageCode = 'zh-cn'
+title = 'QIZHI Tech Blog'
+theme = 'PaperMod'
+
+[params]
+    defaultTheme = "auto"
