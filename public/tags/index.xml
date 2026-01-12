@@ -2,31 +2,31 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Tags on QIZHI Tech Blog</title>
-    <link>http://localhost:38259/tags/</link>
+    <link>http://localhost:34557/tags/</link>
     <description>Recent content in Tags on QIZHI Tech Blog</description>
     <generator>Hugo -- 0.152.2</generator>
     <language>zh-cn</language>
     <lastBuildDate>Sun, 11 Jan 2026 12:00:00 +0800</lastBuildDate>
-    <atom:link href="http://localhost:38259/tags/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:34557/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Arch</title>
-      <link>http://localhost:38259/tags/arch/</link>
+      <link>http://localhost:34557/tags/arch/</link>
       <pubDate>Sun, 11 Jan 2026 12:00:00 +0800</pubDate>
-      <guid>http://localhost:38259/tags/arch/</guid>
+      <guid>http://localhost:34557/tags/arch/</guid>
       <description></description>
     </item>
     <item>
       <title>Linux</title>
-      <link>http://localhost:38259/tags/linux/</link>
+      <link>http://localhost:34557/tags/linux/</link>
       <pubDate>Sun, 11 Jan 2026 12:00:00 +0800</pubDate>
-      <guid>http://localhost:38259/tags/linux/</guid>
+      <guid>http://localhost:34557/tags/linux/</guid>
       <description></description>
     </item>
     <item>
       <title>Ops</title>
-      <link>http://localhost:38259/tags/ops/</link>
+      <link>http://localhost:34557/tags/ops/</link>
       <pubDate>Sun, 11 Jan 2026 12:00:00 +0800</pubDate>
-      <guid>http://localhost:38259/tags/ops/</guid>
+      <guid>http://localhost:34557/tags/ops/</guid>
       <description></description>
     </item>
   </channel>

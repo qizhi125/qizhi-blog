@@ -28,21 +28,21 @@ theme = 'PaperMod'
     Title = "QIZHI"
     # 这里用 Markdown + HTML 完美复刻
     Content = """
-    ![avatar](/image/avatar.png)
+![avatar](/image/avatar.png)
 
-    <h1>QIZHI</h1>
+<h1>QIZHI</h1>
 
-    💻 Linux System Developer | C++ Enthusiast
+💻 Linux System Developer | C++ Enthusiast
 
-    <div class="buttons">
-        <a class="button" href="https://github.com/qizhi125" rel="noopener" title="My Projects">
-            <span class="button-inner">My Projects</span>
-        </a>
-        <a class="button" href="/posts/arch-linux/" rel="noopener" title="Arch Linux Note">
-            <span class="button-inner">Arch Linux Note</span>
-        </a>
-    </div>
-    """
+<div class="buttons">
+    <a class="button" href="https://github.com/qizhi125" rel="noopener" title="My Projects">
+        <span class="button-inner">My Projects</span>
+    </a>
+    <a class="button" href="/posts/arch-linux/" rel="noopener" title="Arch Linux Note">
+        <span class="button-inner">Arch Linux Note</span>
+    </a>
+</div>
+"""
 
     # 🔗 社交图标
     [[params.socialIcons]]
