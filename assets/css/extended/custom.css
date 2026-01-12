@@ -38,3 +38,103 @@
 .first-entry .entry-header {
     display: none;
 }
+
+/* ============================================
+   TOC 侧边目录：Flex 布局修正版 (解决错位)
+   ============================================ */
+@media screen and (min-width: 1300px) {
+    .toc {
+        display: block !important;
+        position: fixed !important;
+        left: 20px;
+        top: 100px;
+        width: 300px;
+        max-height: 80vh;
+        overflow-y: auto;
+        z-index: 999;
+        background: var(--entry);
+        padding: 20px 15px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .toc summary {
+        font-weight: bold;
+        font-size: 16px;
+        margin-bottom: 15px;
+        border-bottom: 2px solid var(--primary);
+        padding-bottom: 8px;
+        cursor: default;
+    }
+    .toc summary::marker { content: ""; }
+
+    .toc ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    /* ⬇️ 核心布局：Flexbox */
+    .toc li {
+        display: flex;             /* 让箭头和链接左右并排 */
+        align-items: baseline;     /* ✅ 关键：箭头和第一行文字基线对齐 */
+        margin-top: 8px;
+        position: relative;
+        line-height: 1.5;
+        flex-wrap: wrap;           /* 允许子菜单换行到下方 */
+    }
+
+    /* 链接文字 */
+    .toc a {
+        color: var(--secondary);
+        text-decoration: none;
+        font-size: 14px;
+        flex: 1;                   /* 自动占满剩余宽度 */
+        word-wrap: break-word;     /* 允许长文字换行 */
+        transition: color 0.2s;
+        /* 移除 margin/padding 防止干扰 Flex */
+    }
+    .toc a:hover { color: var(--primary); text-decoration: underline; }
+    .toc a.active { color: var(--primary); font-weight: bold; }
+
+    /* ⬇️ 子菜单 */
+    .toc ul ul {
+        display: none;             /* 默认折叠 */
+        width: 100%;               /* 强制换行占满整行 */
+        margin-left: 10px;         /* 整体缩进 */
+        padding-left: 0;
+        border-left: 2px solid var(--border); /* 引导线 */
+    }
+
+    /* 子菜单项 */
+    .toc ul ul li {
+        padding-left: 12px;        /* 内容离引导线的距离 */
+        margin-top: 6px;
+    }
+
+    /* 📂 展开状态 (对应 JS 的 is-active) */
+    .toc li.is-active > ul {
+        display: block;
+    }
+
+    /* ▶️ 箭头按钮 */
+    .toc-arrow {
+        flex-shrink: 0;            /* 禁止箭头被挤扁 */
+        width: 18px;               /* 固定宽度 */
+        text-align: center;
+        margin-right: 6px;         /* 箭头和文字的间距 */
+        color: var(--secondary);
+        font-size: 10px;
+        cursor: pointer;
+        user-select: none;
+        transition: transform 0.2s;
+    }
+    .toc-arrow:hover { color: var(--primary); }
+
+    /* 旋转动画 */
+    .toc li.is-active > .toc-arrow {
+        transform: rotate(90deg);
+        color: var(--primary);
+    }
+}

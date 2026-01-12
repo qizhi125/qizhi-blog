@@ -11,7 +11,7 @@
 <meta name="description" content="Focus on C&#43;&#43;, Linux Kernel, and System Security.">
 <meta name="author" content="QIZHI">
 <link rel="canonical" href="http://localhost:1313/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.c39c398336339985f767a9eebb429046ffeefb51658de6cf0dc3a3caa6f2f954.css" integrity="sha256-w5w5gzYzmYX3Z6nuu0KQRv/u&#43;1FljebPDcOjyqby&#43;VQ=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.4fc51aea4bb2981f0e541a9a160ac629810565a12583c7898887f4a9861b6caa.css" integrity="sha256-T8Ua6kuymB8OVBqaFgrGKYEFZaElg8eJiIf0qYYbbKo=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
@@ -205,19 +205,14 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
-    <h2 class="entry-hint-parent">Linux 运维实战演练：Arch Linux 从零构建
+    <h2 class="entry-hint-parent">Linux 运维实战：从零构建 Arch Linux 生产环境
     </h2>
   </header>
   <div class="entry-content">
-    <p>🐧 Linux 运维实战演练：Arch Linux 从零构建 (PDF 完整复刻版) 文档来源：实战演练 - Arch Linux 从零构建.pdf
-演练目标：掌握 Linux 服务器初始化、磁盘管理、核心安装及引导配置。
-实战环境：GNOME Boxes / Arch Linux ISO
-🟢 Part 1：环境初始化 (Infrastructure) 第一节：网络连通性检查 (Network Check) 📄 场景模拟：拿到一台新服务器 or 排查故障时，第一件事永远是检查网络。
-1. 执行检查命令 ping -c 3 baidu.com 参数含义：-c 3 表示只发送 3 个包，防止无限刷屏。 2. 结果分析 (Result Analysis) ✅ 正常现象： 显示 64 bytes from ... 含义：DNS 解析正常，网卡已获取 IP，外网连通。 ❌ 异常现象： 显示 Temporary failure in name resolution 含义：DNS 解析失败，通常意味着网卡未启动或未配置 DNS。 3. 故障排除 (Troubleshooting) 如果 Ping 不通，在 Arch ISO 环境下尝试以下方案：
-...</p>
+    <p>抛弃图形化安装器，深入理解 Linux 系统的启动流程与组件构成。本文记录了一次标准的 Arch Linux 手动构建过程，包含磁盘分区策略、内核安装及 GRUB 引导配置。</p>
   </div>
-  <footer class="entry-footer"><span title='2026-01-11 12:00:00 +0800 CST'>January 11, 2026</span>&nbsp;·&nbsp;<span>3 min</span>&nbsp;·&nbsp;<span>QIZHI</span></footer>
-  <a class="entry-link" aria-label="post link to Linux 运维实战演练：Arch Linux 从零构建" href="http://localhost:1313/posts/arch-linux/"></a>
+  <footer class="entry-footer"><span title='2026-01-11 12:00:00 +0800 CST'>January 11, 2026</span>&nbsp;·&nbsp;<span>2 min</span>&nbsp;·&nbsp;<span>QIZHI</span></footer>
+  <a class="entry-link" aria-label="post link to Linux 运维实战：从零构建 Arch Linux 生产环境" href="http://localhost:1313/posts/arch-linux/"></a>
 </article>
     </main>
     
@@ -234,7 +229,56 @@
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
         <path d="M12 6H0l6-6z" />
     </svg>
-</a>
+</a><script>
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        if (window.innerWidth < 1300) return;
+
+        const toc = document.querySelector('.toc');
+        if (!toc) return;
+
+        const listItems = toc.querySelectorAll('li');
+
+        listItems.forEach(li => {
+            const childUl = li.querySelector('ul');
+
+            
+            if (childUl) {
+                const btn = document.createElement('span');
+                
+                btn.className = 'toc-arrow';
+                btn.innerText = '▶';
+
+                
+                li.insertBefore(btn, li.firstChild);
+
+                
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    
+                    li.classList.toggle('is-active');
+                });
+            } else {
+                
+                const spacer = document.createElement('span');
+                spacer.className = 'toc-arrow';
+                spacer.style.visibility = 'hidden';
+                spacer.innerText = '▶';
+                li.insertBefore(spacer, li.firstChild);
+            }
+        });
+
+        
+        const activeLink = toc.querySelector('a[href="' + location.hash + '"]');
+        if(activeLink) {
+            let parentLi = activeLink.closest('li');
+            while(parentLi) {
+                parentLi.classList.add('is-active');
+                parentLi = parentLi.parentElement.closest('li');
+            }
+        }
+    });
+</script>
 
 <script>
     let menu = document.getElementById('menu');

@@ -5,44 +5,12 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="robots" content="index, follow">
-<title>Linux 运维实战演练：Arch Linux 从零构建 | QIZHI Tech Blog</title>
-<meta name="keywords" content="Linux, Arch, Ops">
-<meta name="description" content="🐧 Linux 运维实战演练：Arch Linux 从零构建 (PDF 完整复刻版)
-文档来源：实战演练 - Arch Linux 从零构建.pdf
-演练目标：掌握 Linux 服务器初始化、磁盘管理、核心安装及引导配置。
-实战环境：GNOME Boxes / Arch Linux ISO
-
-🟢 Part 1：环境初始化 (Infrastructure)
-第一节：网络连通性检查 (Network Check)
-
-📄 场景模拟：拿到一台新服务器 or 排查故障时，第一件事永远是检查网络。
-
-1. 执行检查命令
-ping -c 3 baidu.com
-
-参数含义：-c 3 表示只发送 3 个包，防止无限刷屏。
-
-2. 结果分析 (Result Analysis)
-
-
-✅ 正常现象：
-
-显示 64 bytes from ...
-含义：DNS 解析正常，网卡已获取 IP，外网连通。
-
-
-❌ 异常现象：
-
-显示 Temporary failure in name resolution
-含义：DNS 解析失败，通常意味着网卡未启动或未配置 DNS。
-
-
-
-3. 故障排除 (Troubleshooting)
-如果 Ping 不通，在 Arch ISO 环境下尝试以下方案：">
+<title>Linux 运维实战：从零构建 Arch Linux 生产环境 | QIZHI Tech Blog</title>
+<meta name="keywords" content="Linux, Arch, DevOps, Kernel">
+<meta name="description" content="抛弃图形化安装器，深入理解 Linux 系统的启动流程与组件构成。本文记录了一次标准的 Arch Linux 手动构建过程，包含磁盘分区策略、内核安装及 GRUB 引导配置。">
 <meta name="author" content="QIZHI">
 <link rel="canonical" href="http://localhost:1313/posts/arch-linux/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.c39c398336339985f767a9eebb429046ffeefb51658de6cf0dc3a3caa6f2f954.css" integrity="sha256-w5w5gzYzmYX3Z6nuu0KQRv/u&#43;1FljebPDcOjyqby&#43;VQ=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.4fc51aea4bb2981f0e541a9a160ac629810565a12583c7898887f4a9861b6caa.css" integrity="sha256-T8Ua6kuymB8OVBqaFgrGKYEFZaElg8eJiIf0qYYbbKo=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
@@ -104,12 +72,8 @@ ping -c 3 baidu.com
 
 </script><meta property="og:url" content="http://localhost:1313/posts/arch-linux/">
   <meta property="og:site_name" content="QIZHI Tech Blog">
-  <meta property="og:title" content="Linux 运维实战演练：Arch Linux 从零构建">
-  <meta property="og:description" content="🐧 Linux 运维实战演练：Arch Linux 从零构建 (PDF 完整复刻版) 文档来源：实战演练 - Arch Linux 从零构建.pdf
-演练目标：掌握 Linux 服务器初始化、磁盘管理、核心安装及引导配置。
-实战环境：GNOME Boxes / Arch Linux ISO
-🟢 Part 1：环境初始化 (Infrastructure) 第一节：网络连通性检查 (Network Check) 📄 场景模拟：拿到一台新服务器 or 排查故障时，第一件事永远是检查网络。
-1. 执行检查命令 ping -c 3 baidu.com 参数含义：-c 3 表示只发送 3 个包，防止无限刷屏。 2. 结果分析 (Result Analysis) ✅ 正常现象： 显示 64 bytes from ... 含义：DNS 解析正常，网卡已获取 IP，外网连通。 ❌ 异常现象： 显示 Temporary failure in name resolution 含义：DNS 解析失败，通常意味着网卡未启动或未配置 DNS。 3. 故障排除 (Troubleshooting) 如果 Ping 不通，在 Arch ISO 环境下尝试以下方案：">
+  <meta property="og:title" content="Linux 运维实战：从零构建 Arch Linux 生产环境">
+  <meta property="og:description" content="抛弃图形化安装器，深入理解 Linux 系统的启动流程与组件构成。本文记录了一次标准的 Arch Linux 手动构建过程，包含磁盘分区策略、内核安装及 GRUB 引导配置。">
   <meta property="og:locale" content="zh-cn">
   <meta property="og:type" content="article">
     <meta property="article:section" content="posts">
@@ -117,42 +81,11 @@ ping -c 3 baidu.com
     <meta property="article:modified_time" content="2026-01-11T12:00:00+08:00">
     <meta property="article:tag" content="Linux">
     <meta property="article:tag" content="Arch">
-    <meta property="article:tag" content="Ops">
+    <meta property="article:tag" content="DevOps">
+    <meta property="article:tag" content="Kernel">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Linux 运维实战演练：Arch Linux 从零构建">
-<meta name="twitter:description" content="🐧 Linux 运维实战演练：Arch Linux 从零构建 (PDF 完整复刻版)
-文档来源：实战演练 - Arch Linux 从零构建.pdf
-演练目标：掌握 Linux 服务器初始化、磁盘管理、核心安装及引导配置。
-实战环境：GNOME Boxes / Arch Linux ISO
-
-🟢 Part 1：环境初始化 (Infrastructure)
-第一节：网络连通性检查 (Network Check)
-
-📄 场景模拟：拿到一台新服务器 or 排查故障时，第一件事永远是检查网络。
-
-1. 执行检查命令
-ping -c 3 baidu.com
-
-参数含义：-c 3 表示只发送 3 个包，防止无限刷屏。
-
-2. 结果分析 (Result Analysis)
-
-
-✅ 正常现象：
-
-显示 64 bytes from ...
-含义：DNS 解析正常，网卡已获取 IP，外网连通。
-
-
-❌ 异常现象：
-
-显示 Temporary failure in name resolution
-含义：DNS 解析失败，通常意味着网卡未启动或未配置 DNS。
-
-
-
-3. 故障排除 (Troubleshooting)
-如果 Ping 不通，在 Arch ISO 环境下尝试以下方案：">
+<meta name="twitter:title" content="Linux 运维实战：从零构建 Arch Linux 生产环境">
+<meta name="twitter:description" content="抛弃图形化安装器，深入理解 Linux 系统的启动流程与组件构成。本文记录了一次标准的 Arch Linux 手动构建过程，包含磁盘分区策略、内核安装及 GRUB 引导配置。">
 
 
 <script type="application/ld+json">
@@ -169,7 +102,7 @@ ping -c 3 baidu.com
     {
       "@type": "ListItem",
       "position":  2 ,
-      "name": "Linux 运维实战演练：Arch Linux 从零构建",
+      "name": "Linux 运维实战：从零构建 Arch Linux 生产环境",
       "item": "http://localhost:1313/posts/arch-linux/"
     }
   ]
@@ -179,14 +112,14 @@ ping -c 3 baidu.com
 {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
-  "headline": "Linux 运维实战演练：Arch Linux 从零构建",
-  "name": "Linux 运维实战演练：Arch Linux 从零构建",
-  "description": "🐧 Linux 运维实战演练：Arch Linux 从零构建 (PDF 完整复刻版) 文档来源：实战演练 - Arch Linux 从零构建.pdf\n演练目标：掌握 Linux 服务器初始化、磁盘管理、核心安装及引导配置。\n实战环境：GNOME Boxes / Arch Linux ISO\n🟢 Part 1：环境初始化 (Infrastructure) 第一节：网络连通性检查 (Network Check) 📄 场景模拟：拿到一台新服务器 or 排查故障时，第一件事永远是检查网络。\n1. 执行检查命令 ping -c 3 baidu.com 参数含义：-c 3 表示只发送 3 个包，防止无限刷屏。 2. 结果分析 (Result Analysis) ✅ 正常现象： 显示 64 bytes from ... 含义：DNS 解析正常，网卡已获取 IP，外网连通。 ❌ 异常现象： 显示 Temporary failure in name resolution 含义：DNS 解析失败，通常意味着网卡未启动或未配置 DNS。 3. 故障排除 (Troubleshooting) 如果 Ping 不通，在 Arch ISO 环境下尝试以下方案：\n",
+  "headline": "Linux 运维实战：从零构建 Arch Linux 生产环境",
+  "name": "Linux 运维实战：从零构建 Arch Linux 生产环境",
+  "description": "抛弃图形化安装器，深入理解 Linux 系统的启动流程与组件构成。本文记录了一次标准的 Arch Linux 手动构建过程，包含磁盘分区策略、内核安装及 GRUB 引导配置。",
   "keywords": [
-    "Linux", "Arch", "Ops"
+    "Linux", "Arch", "DevOps", "Kernel"
   ],
-  "articleBody": "🐧 Linux 运维实战演练：Arch Linux 从零构建 (PDF 完整复刻版) 文档来源：实战演练 - Arch Linux 从零构建.pdf\n演练目标：掌握 Linux 服务器初始化、磁盘管理、核心安装及引导配置。\n实战环境：GNOME Boxes / Arch Linux ISO\n🟢 Part 1：环境初始化 (Infrastructure) 第一节：网络连通性检查 (Network Check) 📄 场景模拟：拿到一台新服务器 or 排查故障时，第一件事永远是检查网络。\n1. 执行检查命令 ping -c 3 baidu.com 参数含义：-c 3 表示只发送 3 个包，防止无限刷屏。 2. 结果分析 (Result Analysis) ✅ 正常现象： 显示 64 bytes from ... 含义：DNS 解析正常，网卡已获取 IP，外网连通。 ❌ 异常现象： 显示 Temporary failure in name resolution 含义：DNS 解析失败，通常意味着网卡未启动或未配置 DNS。 3. 故障排除 (Troubleshooting) 如果 Ping 不通，在 Arch ISO 环境下尝试以下方案：\n方案 A：启动网络管理器 systemctl start NetworkManager 方案 B：手动使用工具 iwd (无线) 或 dhcpcd (有线)。 第二节：磁盘分区管理 (Disk Partitioning) 📄 场景模拟：面对一块全新的硬盘（或虚拟机磁盘），规划存储空间。\n🔧 核心工具：lsblk (查看), cfdisk (图形化操作)。\nStep 1: 检查磁盘状态 (Inspection) 在操作前，必须确认硬盘设备名，防止误格盘。\nlsblk # 预期：看到名为 vda 或 sda 的磁盘，且没有全部分配。 预期结果：\n看到名为 vda (虚拟机磁盘) 或 sda (物理机 SATA 磁盘) 的设备。\nTYPE 为 disk。\nSIZE 应该显示总容量（如 40G），且下方没有任何分支（即没有 part），说明是空盘。\nStep 2: 执行分区操作 (Execution) 使用图形化工具 cfdisk 进行交互式分区。\ncfdisk /dev/vda 1. 选择分区表 (Label Type) 操作：选择 gpt。 🧠 面试考点：为什么选 GPT？ 答：GPT 是现代服务器标准，支持 \u003e2TB 硬盘，必须配合 UEFI 启动模式使用。 2. 详细分区方案 (Partition Scheme)： 分区编号 容量大小 类型 (Type) 作用 (面试必问) vda1 500M EFI System 引导区。存放 Bootloader (GRUB)，UEFI 固件开机只认它。 vda2 2G Linux swap 交换分区。内存不够时作为备用内存，防止系统 OOM 崩溃。 vda3 剩余所有 Linux filesystem 根分区 (/)。存放系统文件、日志和用户数据。 3. 写入磁盘 (Persist)： 操作：选中底部的 [ Write ] -\u003e 输入 yes -\u003e 回车。 ⚠️ 警示：如果不执行此步，之前的操作仅停留在内存中，不会生效。 Step 3: 最终验证 (Verification) 再次执行 lsblk 确认分区结构。\nlsblk 验收标准 (Expected Output)：\nNAME MAJ:MIN RM SIZE RO TYPE MOUNTPOINTS vda 254:0 0 40G 0 disk ├─vda1 254:1 0 500M 0 part ├─vda2 254:2 0 2G 0 part └─vda3 254:3 0 37.5G 0 part 第三节：格式化与挂载 (Formatting \u0026 Mounting) 📄 场景模拟：将划分好的“毛坯房”装修（格式化文件系统）并分配门牌号（挂载目录）。\n1. 格式化文件系统 (Formatting) 根据不同分区的用途，刷入不同的文件系统。\n# 1. 引导分区 -\u003e 必须 FAT32 (UEFI 规范要求) mkfs.fat -F32 /dev/vda1 [cite: 74, 75] # 2. 交换分区 -\u003e 制作并启用 Swap mkswap /dev/vda2 [cite: 76] swapon /dev/vda2 [cite: 78] # 3. 根分区 -\u003e 使用 EXT4 (最稳健的 Linux 文件系统) mkfs.ext4 /dev/vda3 [cite: 80, 81] 2. 挂载分区 (Mounting) ⚠️ 运维铁律：挂载必须遵循父子顺序，先挂根目录，再挂子目录。\n# 第一步：挂载根目录 (必须最先执行！) mount /dev/vda3 /mnt [cite: 105] # 第二步：创建挂载点 (有了根目录才能建文件夹) mkdir /mnt/boot [cite: 107] # 第三步：挂载引导分区 mount /dev/vda1 /mnt/boot [cite: 110] 🟡 Part 2：核心系统构建 (System Build) 第四节：镜像源优化 (Mirror Configuration) 📄 场景模拟：服务器位于海外，或者默认源下载速度仅几 KB/s，导致业务部署超时或失败。\n🔧 运维动作：切换国内高速源（清华/阿里/中科大），并配置多级备用源以实现容灾。\n1. 编辑镜像列表 使用 vim 打开 pacman 的镜像配置文件。\nvim /etc/pacman.d/mirrorlist 2. 配置策略 (Interview Point) 在文件最顶端添加国内源（优先级最高）：\nServer = https://mirrors.tuna.tsinghua.edu.cn/archlinux/$repo/os/$arch Server = https://mirrors.ustc.edu.cn/archlinux/$repo/os/$arch Server = https://mirrors.aliyun.com/archlinux/$repo/os/$arch 操作要点： 修改完后必须执行 pacman -Syy 强制刷新数据库。 3. 故障排查经验 (Story) 问题描述：初始化环境时，发现默认源下载速度极慢（约 20KB/s）。 解决方案：分析网络链路，通过编辑配置引入清华和阿里云镜像 。 结果：下载速度提升至宽带满速，体现了运维人员对服务可用性和网络优化的意识 。 第五节：基础系统安装 (Base System Installation) 场景模拟：根据业务需求，定制化安装操**📄 场景模拟**：根据业务需求，向空硬盘中定制化灌入操作系统核心组件 。作系统核心组件。\n1. 执行安装命令 pacstrap -K /mnt base linux linux-firmware vim networkmanager sudo man-db 2. 组件解析 (Component Analysis) 面试时需解释“为什么装这些包”： 组件名称 作用 (面试话术) linux \u0026 linux-firmware 内核与驱动。没有 firmware，网卡和显卡可能无法工作 。 vim 运维的手术刀。系统装好后，必须有编辑器来修改配置 。 networkmanager 网络管理工具。提供 nmcli 命令，方便后续配置网络 。 第六节：系统交接与穿越 (System Handoff) 📄 场景模拟：安装文件已就绪，现在需要生成“地图”（fstab）并正式“入驻”（chroot）新系统 。\n1. 生成挂载表 (Fstab Generation) 作用：告诉 Linux 内核，开机时每个分区该挂载到哪里。如果不做这一步，重启后系统无法识别硬盘 。\ngenfstab -U /mnt \u003e\u003e /mnt/etc/fstab 2. 验证挂载表 (Verification) —— 必做！ 运维铁律：修改配置后必须 Review。 cat /mnt/etc/fstab 检查点： 看到 UUID=... / ext4 (根分区) 看到 UUID=... /boot vfat (引导分区) 面试加分项：解释为什么用 UUID（防止插拔硬盘导致盘符漂移）。 3. 穿越进入新系统 (Chroot) 作用：Change Root。将当前的根目录从“安装光盘”切换到“硬盘里的新系统” 。\narch-chroot /mnt 🟡 Part 3：系统核心配置 (Configuration) 第七节：系统身份确立 (System Identity) 场景模拟：进入新系统后，必须确立它的“身份”（时间、语言、名字）。\n1. 基础配置命令清单 时区与硬件时间：\nln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime hwclock --systohc 本地化 (Locale)：\nlocale-gen # 生成 en_US.UTF-8 和 zh_CN.UTF-8 echo \"LANG=en_US.UTF-8\" \u003e /etc/locale.conf 主机名与网络身份：\necho \"QIZHI\" \u003e /etc/hostname Root 密码：\npasswd 第八节：引导程序安装 (The Bootloader - GRUB) 核心考点：这是决定电脑开机能否找到 Linux 的关键一步。\n1. 安装 GRUB 到 EFI 分区 grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB ✅ 关键验收标准 (Key Output)： 终端显示：Installation finished. No error reported. 面试话术：看到这句话，说明 GRUB 的 .efi 文件已经成功写入了 EFI 分区，主板已经认识这个系统了。 2. 生成 GRUB 配置文件 grub-mkconfig -o /boot/grub/grub.cfg ✅ 关键验收标准 (Key Output)：\n终端显示：Found linux image: /boot/vmlinuz-linux 终端显示：Found initrd image: /boot/initramfs-linux.img 面试话术：这步是为了让 GRUB 自动扫描 /boot 目录，找到 Linux 内核的位置，并生成启动菜单。如果没扫到内核，开机就会进 grub rescue 模式。 🏁 Part 4：收尾与重启 (Finalize) 当前操作指引：你的系统已经全部装好了！现在我们需要优雅地退出并重启。\n请在终端依次执行以下最后三个命令：\n退出新系统 (回到安装盘环境)：\nexit 卸载分区 (确保数据写入磁盘，防止文件损坏)：\numount -R /mnt 卸载分区 (确保数据写入磁盘，防止文件损坏)：\nreboot ",
-  "wordCount" : "575",
+  "articleBody": " 写在前面： Arch Linux 的手动安装过程是理解 Linux 发行版构成（Kernel, Userland, Bootloader）的绝佳实践。 本文基于实战环境（GNOME Boxes / ISO），记录了从裸金属环境到最小化可用系统的完整构建流程。\n🟢 Phase 1：环境初始化 (Infrastructure) 在开始触碰磁盘之前，我们需要确保“救援环境”本身是健康且网络通畅的。\n1. 网络连通性检查 拿到一台新服务器或排查故障时，第一件事永远是检查网络。\nping -c 3 baidu.com 结果分析：\n✅ 正常：显示 64 bytes from ...，说明 DNS 解析正常，网卡已获取 IP。 ❌ 异常：显示 Temporary failure in name resolution，通常意味着 DNS 解析失败或网卡未启动。 💡 Troubleshooting： 如果网络不通，在 Arch ISO 环境下可尝试手动启动网络管理器： systemctl start NetworkManager\n2. 磁盘分区规划 面对一块全新的硬盘（或虚拟机磁盘），合理的规划至关重要。\n核心工具：lsblk (查看), cfdisk (图形化分区)。\nStep 1: 检查磁盘状态 lsblk 在操作前，务必确认硬盘设备名（如 /dev/vda 或 /dev/sda），防止误格盘。此时你应该看到一个干净的 disk 设备，没有任何 part 分支。\nStep 2: 执行分区 (GPT 方案) 采用现代服务器标准的 GPT 分区表（配合 UEFI 启动）。\ncfdisk /dev/vda 分区方案如下：\n分区 容量 类型 作用 vda1 512M EFI System 引导区。存放 GRUB 和内核镜像，UEFI 固件只认它。 vda2 2G Linux swap 交换分区。防止内存溢出 (OOM) 导致系统崩溃。 vda3 剩余 Linux filesystem 根分区 (/)。存放系统文件与用户数据。 ⚠️ 注意：操作完成后，务必选择 [ Write ] 并输入 yes 写入更改，否则一切操作仅停留在内存中。\nStep 3: 格式化与挂载 有了“房间”（分区），还需要“装修”（文件系统）才能入住。\n# 1. 引导分区 -\u003e 必须 FAT32 (UEFI 规范强制要求) mkfs.fat -F32 /dev/vda1 # 2. 交换分区 -\u003e 初始化并启用 mkswap /dev/vda2 swapon /dev/vda2 # 3. 根分区 -\u003e 使用 EXT4 (最稳健的 Linux 文件系统) mkfs.ext4 /dev/vda3 挂载顺序： 必须遵循 先根后子 的顺序。\nmount /dev/vda3 /mnt # 1. 先挂根目录 mkdir /mnt/boot # 2. 再建挂载点 mount /dev/vda1 /mnt/boot # 3. 最后挂引导分区 🟡 Phase 2：核心系统构建 (System Build) 3. 镜像源优化 默认的源在海外，速度可能极慢。为了保证生产效率，我们需要配置国内镜像。\n编辑 /etc/pacman.d/mirrorlist，将以下源置顶：\nServer = [https://mirrors.tuna.tsinghua.edu.cn/archlinux/$repo/os/$arch](https://mirrors.tuna.tsinghua.edu.cn/archlinux/$repo/os/$arch) Server = [https://mirrors.aliyun.com/archlinux/$repo/os/$arch](https://mirrors.aliyun.com/archlinux/$repo/os/$arch) 修改后记得执行 pacman -Syy 强制刷新数据库。\n4. 基础系统安装 (Pacstrap) 这是最关键的一步，我们向空硬盘中灌入操作系统的核心组件。\npacstrap -K /mnt base linux linux-firmware vim networkmanager sudo man-db 组件解析：\nlinux \u0026 firmware: 也就是 Kernel。没有 Firmware，网卡和显卡可能无法工作。 vim: 系统装好后，必须有编辑器来修改配置（运维的手术刀）。 networkmanager: 提供 nmcli，方便后续管理网络。 5. 生成 fstab 并切换环境 Fstab (File System Table) 告诉 Linux 内核开机时每个分区该挂载到哪里。如果不生成，重启后系统将找不到硬盘。\ngenfstab -U /mnt \u003e\u003e /mnt/etc/fstab 检查点：执行 cat /mnt/etc/fstab，确保你看到了 UUID=... / ext4 和 UUID=... /boot vfat 的记录。推荐使用 UUID 挂载，防止插拔硬盘导致盘符漂移。\n最后，穿越进入新系统：\narch-chroot /mnt 🔵 Phase 3：系统核心配置 (Configuration) 进入 Chroot 环境后，我们相当于已经在了新系统内部。现在需要确立它的“身份”。\n6. 身份与时区 # 1. 设置时区 (上海) ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime hwclock --systohc # 2. 本地化设置 # 编辑 /etc/locale.gen 取消 en_US.UTF-8 和 zh_CN.UTF-8 的注释，然后执行： locale-gen echo \"LANG=en_US.UTF-8\" \u003e /etc/locale.conf # 3. 设置主机名 echo \"QIZHI-ARCH\" \u003e /etc/hostname # 4. 设置 Root 密码 passwd 7. 引导程序安装 (GRUB) 这是决定电脑开机能否找到 Linux 的最后一步。\n# 安装 GRUB 到 EFI 分区 grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB # 生成配置文件 grub-mkconfig -o /boot/grub/grub.cfg 验收标准： 看到 Found linux image: /boot/vmlinuz-linux 和 Found initrd image，说明 GRUB 成功扫描到了我们刚才安装的内核。\n🏁 Phase 4：收尾与重启 恭喜，系统构建完成。现在我们需要优雅地退出。\n退出 Chroot：exit 卸载分区：umount -R /mnt (确保数据完全写入磁盘) 重启：reboot 拔掉安装介质，迎接你的全新 Arch Linux 吧！🐧\n",
+  "wordCount" : "347",
   "inLanguage": "en",
   "datePublished": "2026-01-11T12:00:00+08:00",
   "dateModified": "2026-01-11T12:00:00+08:00",
@@ -267,318 +200,198 @@ ping -c 3 baidu.com
   <header class="post-header">
     <div class="breadcrumbs"><a href="http://localhost:1313/">Home</a>&nbsp;»&nbsp;<a href="http://localhost:1313/posts/">Posts</a></div>
     <h1 class="post-title entry-hint-parent">
-      Linux 运维实战演练：Arch Linux 从零构建
+      Linux 运维实战：从零构建 Arch Linux 生产环境
     </h1>
-    <div class="post-meta"><span title='2026-01-11 12:00:00 +0800 CST'>January 11, 2026</span>&nbsp;·&nbsp;<span>3 min</span>&nbsp;·&nbsp;<span>QIZHI</span>
+    <div class="post-meta"><span title='2026-01-11 12:00:00 +0800 CST'>January 11, 2026</span>&nbsp;·&nbsp;<span>2 min</span>&nbsp;·&nbsp;<span>QIZHI</span>
 
 </div>
-  </header> 
-  <div class="post-content"><h1 id="-linux-运维实战演练arch-linux-从零构建-pdf-完整复刻版">🐧 Linux 运维实战演练：Arch Linux 从零构建 (PDF 完整复刻版)<a hidden class="anchor" aria-hidden="true" href="#-linux-运维实战演练arch-linux-从零构建-pdf-完整复刻版">#</a></h1>
-<p><strong>文档来源</strong>：实战演练 - Arch Linux 从零构建.pdf</p>
-<p><strong>演练目标</strong>：掌握 Linux 服务器初始化、磁盘管理、核心安装及引导配置。</p>
-<p><strong>实战环境</strong>：GNOME Boxes / Arch Linux ISO</p>
+  </header> <div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#-phase-1%e7%8e%af%e5%a2%83%e5%88%9d%e5%a7%8b%e5%8c%96-infrastructure" aria-label="🟢 Phase 1：环境初始化 (Infrastructure)">🟢 Phase 1：环境初始化 (Infrastructure)</a><ul>
+                        
+                <li>
+                    <a href="#1-%e7%bd%91%e7%bb%9c%e8%bf%9e%e9%80%9a%e6%80%a7%e6%a3%80%e6%9f%a5" aria-label="1. 网络连通性检查">1. 网络连通性检查</a></li>
+                <li>
+                    <a href="#2-%e7%a3%81%e7%9b%98%e5%88%86%e5%8c%ba%e8%a7%84%e5%88%92" aria-label="2. 磁盘分区规划">2. 磁盘分区规划</a><ul>
+                        
+                <li>
+                    <a href="#step-1-%e6%a3%80%e6%9f%a5%e7%a3%81%e7%9b%98%e7%8a%b6%e6%80%81" aria-label="Step 1: 检查磁盘状态">Step 1: 检查磁盘状态</a></li>
+                <li>
+                    <a href="#step-2-%e6%89%a7%e8%a1%8c%e5%88%86%e5%8c%ba-gpt-%e6%96%b9%e6%a1%88" aria-label="Step 2: 执行分区 (GPT 方案)">Step 2: 执行分区 (GPT 方案)</a></li>
+                <li>
+                    <a href="#step-3-%e6%a0%bc%e5%bc%8f%e5%8c%96%e4%b8%8e%e6%8c%82%e8%bd%bd" aria-label="Step 3: 格式化与挂载">Step 3: 格式化与挂载</a></li></ul>
+                </li></ul>
+                </li>
+                <li>
+                    <a href="#-phase-2%e6%a0%b8%e5%bf%83%e7%b3%bb%e7%bb%9f%e6%9e%84%e5%bb%ba-system-build" aria-label="🟡 Phase 2：核心系统构建 (System Build)">🟡 Phase 2：核心系统构建 (System Build)</a><ul>
+                        
+                <li>
+                    <a href="#3-%e9%95%9c%e5%83%8f%e6%ba%90%e4%bc%98%e5%8c%96" aria-label="3. 镜像源优化">3. 镜像源优化</a></li>
+                <li>
+                    <a href="#4-%e5%9f%ba%e7%a1%80%e7%b3%bb%e7%bb%9f%e5%ae%89%e8%a3%85-pacstrap" aria-label="4. 基础系统安装 (Pacstrap)">4. 基础系统安装 (Pacstrap)</a></li>
+                <li>
+                    <a href="#5-%e7%94%9f%e6%88%90-fstab-%e5%b9%b6%e5%88%87%e6%8d%a2%e7%8e%af%e5%a2%83" aria-label="5. 生成 fstab 并切换环境">5. 生成 fstab 并切换环境</a></li></ul>
+                </li>
+                <li>
+                    <a href="#-phase-3%e7%b3%bb%e7%bb%9f%e6%a0%b8%e5%bf%83%e9%85%8d%e7%bd%ae-configuration" aria-label="🔵 Phase 3：系统核心配置 (Configuration)">🔵 Phase 3：系统核心配置 (Configuration)</a><ul>
+                        
+                <li>
+                    <a href="#6-%e8%ba%ab%e4%bb%bd%e4%b8%8e%e6%97%b6%e5%8c%ba" aria-label="6. 身份与时区">6. 身份与时区</a></li>
+                <li>
+                    <a href="#7-%e5%bc%95%e5%af%bc%e7%a8%8b%e5%ba%8f%e5%ae%89%e8%a3%85-grub" aria-label="7. 引导程序安装 (GRUB)">7. 引导程序安装 (GRUB)</a></li></ul>
+                </li>
+                <li>
+                    <a href="#-phase-4%e6%94%b6%e5%b0%be%e4%b8%8e%e9%87%8d%e5%90%af" aria-label="🏁 Phase 4：收尾与重启">🏁 Phase 4：收尾与重启</a>
+                </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><blockquote>
+<p><strong>写在前面</strong>：
+Arch Linux 的手动安装过程是理解 Linux 发行版构成（Kernel, Userland, Bootloader）的绝佳实践。
+本文基于实战环境（GNOME Boxes / ISO），记录了从裸金属环境到最小化可用系统的完整构建流程。</p>
+</blockquote>
 <hr>
-<h2 id="-part-1环境初始化-infrastructure">🟢 Part 1：环境初始化 (Infrastructure)<a hidden class="anchor" aria-hidden="true" href="#-part-1环境初始化-infrastructure">#</a></h2>
-<h3 id="第一节网络连通性检查-network-check">第一节：网络连通性检查 (Network Check)<a hidden class="anchor" aria-hidden="true" href="#第一节网络连通性检查-network-check">#</a></h3>
-<blockquote>
-<p><strong>📄 场景模拟</strong>：拿到一台新服务器 or 排查故障时，第一件事永远是检查网络。</p>
-</blockquote>
-<h4 id="1-执行检查命令">1. 执行检查命令<a hidden class="anchor" aria-hidden="true" href="#1-执行检查命令">#</a></h4>
+<h2 id="-phase-1环境初始化-infrastructure">🟢 Phase 1：环境初始化 (Infrastructure)<a hidden class="anchor" aria-hidden="true" href="#-phase-1环境初始化-infrastructure">#</a></h2>
+<p>在开始触碰磁盘之前，我们需要确保“救援环境”本身是健康且网络通畅的。</p>
+<h3 id="1-网络连通性检查">1. 网络连通性检查<a hidden class="anchor" aria-hidden="true" href="#1-网络连通性检查">#</a></h3>
+<p>拿到一台新服务器或排查故障时，第一件事永远是检查网络。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ping -c <span style="color:#ae81ff">3</span> baidu.com
-</span></span></code></pre></div><ul>
-<li><strong>参数含义</strong>：<code>-c 3</code> 表示只发送 3 个包，防止无限刷屏。</li>
-</ul>
-<h4 id="2-结果分析-result-analysis">2. 结果分析 (Result Analysis)<a hidden class="anchor" aria-hidden="true" href="#2-结果分析-result-analysis">#</a></h4>
-<p><img alt="image-20260107235347395" loading="lazy" src="/image/arch/image-20260107235347395.png"></p>
+</span></span></code></pre></div><p><strong>结果分析：</strong></p>
 <ul>
-<li><strong>✅ 正常现象</strong>：
-<ul>
-<li>显示 <code>64 bytes from ...</code></li>
-<li><strong>含义</strong>：DNS 解析正常，网卡已获取 IP，外网连通。</li>
+<li>✅ <strong>正常</strong>：显示 <code>64 bytes from ...</code>，说明 DNS 解析正常，网卡已获取 IP。</li>
+<li>❌ <strong>异常</strong>：显示 <code>Temporary failure in name resolution</code>，通常意味着 DNS 解析失败或网卡未启动。</li>
 </ul>
-</li>
-<li><strong>❌ 异常现象</strong>：
-<ul>
-<li>显示 <code>Temporary failure in name resolution</code></li>
-<li><strong>含义</strong>：DNS 解析失败，通常意味着网卡未启动或未配置 DNS。</li>
-</ul>
-</li>
-</ul>
-<h4 id="3-故障排除-troubleshooting">3. 故障排除 (Troubleshooting)<a hidden class="anchor" aria-hidden="true" href="#3-故障排除-troubleshooting">#</a></h4>
-<p>如果 Ping 不通，在 Arch ISO 环境下尝试以下方案：</p>
-<ul>
-<li><strong>方案 A</strong>：启动网络管理器 <code>systemctl start NetworkManager</code></li>
-<li><strong>方案 B</strong>：手动使用工具 <code>iwd</code> (无线) 或 <code>dhcpcd</code> (有线)。</li>
-</ul>
-<h3 id="第二节磁盘分区管理-disk-partitioning">第二节：磁盘分区管理 (Disk Partitioning)<a hidden class="anchor" aria-hidden="true" href="#第二节磁盘分区管理-disk-partitioning">#</a></h3>
 <blockquote>
-<p><strong>📄 场景模拟</strong>：面对一块全新的硬盘（或虚拟机磁盘），规划存储空间。</p>
-<p><strong>🔧 核心工具</strong>：<code>lsblk</code> (查看), <code>cfdisk</code> (图形化操作)。</p>
+<p><strong>💡 Troubleshooting</strong>：
+如果网络不通，在 Arch ISO 环境下可尝试手动启动网络管理器：
+<code>systemctl start NetworkManager</code></p>
 </blockquote>
-<h4 id="step-1-检查磁盘状态-inspection">Step 1: 检查磁盘状态 (Inspection)<a hidden class="anchor" aria-hidden="true" href="#step-1-检查磁盘状态-inspection">#</a></h4>
-<p>在操作前，必须确认硬盘设备名，防止误格盘。</p>
+<h3 id="2-磁盘分区规划">2. 磁盘分区规划<a hidden class="anchor" aria-hidden="true" href="#2-磁盘分区规划">#</a></h3>
+<p>面对一块全新的硬盘（或虚拟机磁盘），合理的规划至关重要。</p>
+<p><strong>核心工具</strong>：<code>lsblk</code> (查看), <code>cfdisk</code> (图形化分区)。</p>
+<h4 id="step-1-检查磁盘状态">Step 1: 检查磁盘状态<a hidden class="anchor" aria-hidden="true" href="#step-1-检查磁盘状态">#</a></h4>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>lsblk
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># 预期：看到名为 vda 或 sda 的磁盘，且没有全部分配。</span>
-</span></span></code></pre></div><p><img alt="image-20260107235558541" loading="lazy" src="/image/arch/image-20260107235558541.png"></p>
-<ul>
-<li>
-<p><strong>预期结果</strong>：</p>
-<ul>
-<li>
-<p>看到名为 <code>vda</code> (虚拟机磁盘) 或 <code>sda</code> (物理机 SATA 磁盘) 的设备。</p>
-</li>
-<li>
-<p>TYPE 为 <code>disk</code>。</p>
-</li>
-<li>
-<p>SIZE 应该显示总容量（如 40G），且下方没有任何分支（即没有 <code>part</code>），说明是空盘。</p>
-</li>
-</ul>
-</li>
-</ul>
-<h4 id="step-2-执行分区操作-execution">Step 2: 执行分区操作 (Execution)<a hidden class="anchor" aria-hidden="true" href="#step-2-执行分区操作-execution">#</a></h4>
-<p>使用图形化工具 <code>cfdisk</code> 进行交互式分区。</p>
+</span></span></code></pre></div><p>在操作前，务必确认硬盘设备名（如 <code>/dev/vda</code> 或 <code>/dev/sda</code>），防止误格盘。此时你应该看到一个干净的 <code>disk</code> 设备，没有任何 <code>part</code> 分支。</p>
+<h4 id="step-2-执行分区-gpt-方案">Step 2: 执行分区 (GPT 方案)<a hidden class="anchor" aria-hidden="true" href="#step-2-执行分区-gpt-方案">#</a></h4>
+<p>采用现代服务器标准的 <strong>GPT 分区表</strong>（配合 UEFI 启动）。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cfdisk /dev/vda
-</span></span></code></pre></div><h5 id="1-选择分区表-label-type">1. 选择分区表 (Label Type)<a hidden class="anchor" aria-hidden="true" href="#1-选择分区表-label-type">#</a></h5>
-<ul>
-<li><strong>操作</strong>：选择 <strong><code>gpt</code></strong>。</li>
-<li><strong>🧠 面试考点</strong>：<em>为什么选 GPT？</em>
-<ul>
-<li><strong>答</strong>：GPT 是现代服务器标准，支持 &gt;2TB 硬盘，必须配合 UEFI 启动模式使用。</li>
-</ul>
-</li>
-</ul>
-<h5 id="2-详细分区方案-partition-scheme"><strong>2. 详细分区方案 (Partition Scheme)</strong>：<a hidden class="anchor" aria-hidden="true" href="#2-详细分区方案-partition-scheme">#</a></h5>
+</span></span></code></pre></div><p><strong>分区方案如下：</strong></p>
 <table>
   <thead>
       <tr>
-          <th><strong>分区编号</strong></th>
-          <th><strong>容量大小</strong></th>
-          <th><strong>类型 (Type)</strong></th>
-          <th><strong>作用 (面试必问)</strong></th>
+          <th>分区</th>
+          <th>容量</th>
+          <th>类型</th>
+          <th>作用</th>
       </tr>
   </thead>
   <tbody>
       <tr>
           <td><strong>vda1</strong></td>
-          <td><strong>500M</strong></td>
-          <td><strong>EFI System</strong></td>
-          <td><strong>引导区</strong>。存放 Bootloader (GRUB)，UEFI 固件开机只认它。</td>
+          <td>512M</td>
+          <td>EFI System</td>
+          <td><strong>引导区</strong>。存放 GRUB 和内核镜像，UEFI 固件只认它。</td>
       </tr>
       <tr>
           <td><strong>vda2</strong></td>
-          <td><strong>2G</strong></td>
-          <td><strong>Linux swap</strong></td>
-          <td><strong>交换分区</strong>。内存不够时作为备用内存，防止系统 OOM 崩溃。</td>
+          <td>2G</td>
+          <td>Linux swap</td>
+          <td><strong>交换分区</strong>。防止内存溢出 (OOM) 导致系统崩溃。</td>
       </tr>
       <tr>
           <td><strong>vda3</strong></td>
-          <td><strong>剩余所有</strong></td>
-          <td><strong>Linux filesystem</strong></td>
-          <td><strong>根分区 (/)</strong>。存放系统文件、日志和用户数据。</td>
+          <td>剩余</td>
+          <td>Linux filesystem</td>
+          <td><strong>根分区 (/)</strong>。存放系统文件与用户数据。</td>
       </tr>
   </tbody>
 </table>
-<p><img alt="image-20260107235943386" loading="lazy" src="/image/arch/image-20260107235943386.png"></p>
-<h5 id="3-写入磁盘-persist"><strong>3. 写入磁盘 (Persist)</strong>：<a hidden class="anchor" aria-hidden="true" href="#3-写入磁盘-persist">#</a></h5>
-<ul>
-<li><strong>操作</strong>：选中底部的 <code>[ Write ]</code> -&gt; 输入 <code>yes</code> -&gt; 回车。</li>
-<li><strong>⚠️ 警示</strong>：如果不执行此步，之前的操作仅停留在内存中，不会生效。</li>
-</ul>
-<h4 id="step-3-最终验证-verification">Step 3: 最终验证 (Verification)<a hidden class="anchor" aria-hidden="true" href="#step-3-最终验证-verification">#</a></h4>
-<p>再次执行 <code>lsblk</code> 确认分区结构。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>lsblk
-</span></span></code></pre></div><p><img alt="image-20260108000159505" loading="lazy" src="/image/arch/image-20260108000159505.png"></p>
-<ul>
-<li>
-<p><strong>验收标准 (Expected Output)</strong>：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-tex" data-lang="tex"><span style="display:flex;"><span>NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
-</span></span><span style="display:flex;"><span>vda    254:0    0   40G  0 disk
-</span></span><span style="display:flex;"><span>├─vda1 254:1    0  500M  0 part
-</span></span><span style="display:flex;"><span>├─vda2 254:2    0    2G  0 part
-</span></span><span style="display:flex;"><span>└─vda3 254:3    0 37.5G  0 part
-</span></span></code></pre></div></li>
-</ul>
-<h3 id="第三节格式化与挂载-formatting--mounting">第三节：格式化与挂载 (Formatting &amp; Mounting)<a hidden class="anchor" aria-hidden="true" href="#第三节格式化与挂载-formatting--mounting">#</a></h3>
 <blockquote>
-<p><strong>📄 场景模拟</strong>：将划分好的“毛坯房”装修（格式化文件系统）并分配门牌号（挂载目录）。</p>
+<p><strong>⚠️ 注意</strong>：操作完成后，务必选择 <code>[ Write ]</code> 并输入 <code>yes</code> 写入更改，否则一切操作仅停留在内存中。</p>
 </blockquote>
-<h4 id="1-格式化文件系统-formatting">1. 格式化文件系统 (Formatting)<a hidden class="anchor" aria-hidden="true" href="#1-格式化文件系统-formatting">#</a></h4>
-<p>根据不同分区的用途，刷入不同的文件系统。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 1. 引导分区 -&gt; 必须 FAT32 (UEFI 规范要求)</span>
-</span></span><span style="display:flex;"><span>mkfs.fat -F32 /dev/vda1  <span style="color:#f92672">[</span>cite: 74, 75<span style="color:#f92672">]</span>
+<h4 id="step-3-格式化与挂载">Step 3: 格式化与挂载<a hidden class="anchor" aria-hidden="true" href="#step-3-格式化与挂载">#</a></h4>
+<p>有了“房间”（分区），还需要“装修”（文件系统）才能入住。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 1. 引导分区 -&gt; 必须 FAT32 (UEFI 规范强制要求)</span>
+</span></span><span style="display:flex;"><span>mkfs.fat -F32 /dev/vda1
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># 2. 交换分区 -&gt; 制作并启用 Swap</span>
-</span></span><span style="display:flex;"><span>mkswap /dev/vda2         <span style="color:#f92672">[</span>cite: 76<span style="color:#f92672">]</span>
-</span></span><span style="display:flex;"><span>swapon /dev/vda2         <span style="color:#f92672">[</span>cite: 78<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 2. 交换分区 -&gt; 初始化并启用</span>
+</span></span><span style="display:flex;"><span>mkswap /dev/vda2
+</span></span><span style="display:flex;"><span>swapon /dev/vda2
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 3. 根分区 -&gt; 使用 EXT4 (最稳健的 Linux 文件系统)</span>
-</span></span><span style="display:flex;"><span>mkfs.ext4 /dev/vda3      <span style="color:#f92672">[</span>cite: 80, 81<span style="color:#f92672">]</span>
-</span></span></code></pre></div><p><img alt="image-20260108001625918" loading="lazy" src="/image/arch/image-20260108001625918.png"></p>
-<h4 id="2-挂载分区-mounting">2. 挂载分区 (Mounting)<a hidden class="anchor" aria-hidden="true" href="#2-挂载分区-mounting">#</a></h4>
-<p><strong>⚠️ 运维铁律</strong>：挂载必须遵循<strong>父子顺序</strong>，先挂根目录，再挂子目录。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 第一步：挂载根目录 (必须最先执行！)</span>
-</span></span><span style="display:flex;"><span>mount /dev/vda3 /mnt       <span style="color:#f92672">[</span>cite: 105<span style="color:#f92672">]</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># 第二步：创建挂载点 (有了根目录才能建文件夹)</span>
-</span></span><span style="display:flex;"><span>mkdir /mnt/boot            <span style="color:#f92672">[</span>cite: 107<span style="color:#f92672">]</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># 第三步：挂载引导分区</span>
-</span></span><span style="display:flex;"><span>mount /dev/vda1 /mnt/boot  <span style="color:#f92672">[</span>cite: 110<span style="color:#f92672">]</span>
-</span></span></code></pre></div><p><img alt="image-20260108002149581" loading="lazy" src="/image/arch/image-20260108002149581.png"></p>
-<hr>
-<h2 id="-part-2核心系统构建-system-build">🟡 Part 2：核心系统构建 (System Build)<a hidden class="anchor" aria-hidden="true" href="#-part-2核心系统构建-system-build">#</a></h2>
-<h3 id="第四节镜像源优化-mirror-configuration">第四节：镜像源优化 (Mirror Configuration)<a hidden class="anchor" aria-hidden="true" href="#第四节镜像源优化-mirror-configuration">#</a></h3>
-<blockquote>
-<p><strong>📄 场景模拟</strong>：服务器位于海外，或者默认源下载速度仅几 KB/s，导致业务部署超时或失败。</p>
-<p><strong>🔧 运维动作</strong>：切换国内高速源（清华/阿里/中科大），并配置多级备用源以实现<strong>容灾</strong>。</p>
-</blockquote>
-<h4 id="1-编辑镜像列表">1. 编辑镜像列表<a hidden class="anchor" aria-hidden="true" href="#1-编辑镜像列表">#</a></h4>
-<p>使用 vim 打开 pacman 的镜像配置文件。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Bash" data-lang="Bash"><span style="display:flex;"><span>vim /etc/pacman.d/mirrorlist
-</span></span></code></pre></div><h4 id="2-配置策略-interview-point">2. 配置策略 (Interview Point)<a hidden class="anchor" aria-hidden="true" href="#2-配置策略-interview-point">#</a></h4>
-<p>在文件最顶端添加国内源（优先级最高）：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Bash" data-lang="Bash"><span style="display:flex;"><span>Server <span style="color:#f92672">=</span> https://mirrors.tuna.tsinghua.edu.cn/archlinux/$repo/os/$arch
-</span></span><span style="display:flex;"><span>Server <span style="color:#f92672">=</span> https://mirrors.ustc.edu.cn/archlinux/$repo/os/$arch
-</span></span><span style="display:flex;"><span>Server <span style="color:#f92672">=</span> https://mirrors.aliyun.com/archlinux/$repo/os/$arch
-</span></span></code></pre></div><p><img alt="image-20260108091549622" loading="lazy" src="/image/arch/image-20260108091549622.png"></p>
+</span></span><span style="display:flex;"><span>mkfs.ext4 /dev/vda3
+</span></span></code></pre></div><p><strong>挂载顺序：</strong> 必须遵循 <strong>先根后子</strong> 的顺序。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>mount /dev/vda3 /mnt          <span style="color:#75715e"># 1. 先挂根目录</span>
+</span></span><span style="display:flex;"><span>mkdir /mnt/boot               <span style="color:#75715e"># 2. 再建挂载点</span>
+</span></span><span style="display:flex;"><span>mount /dev/vda1 /mnt/boot     <span style="color:#75715e"># 3. 最后挂引导分区</span>
+</span></span></code></pre></div><hr>
+<h2 id="-phase-2核心系统构建-system-build">🟡 Phase 2：核心系统构建 (System Build)<a hidden class="anchor" aria-hidden="true" href="#-phase-2核心系统构建-system-build">#</a></h2>
+<h3 id="3-镜像源优化">3. 镜像源优化<a hidden class="anchor" aria-hidden="true" href="#3-镜像源优化">#</a></h3>
+<p>默认的源在海外，速度可能极慢。为了保证生产效率，我们需要配置国内镜像。</p>
+<p>编辑 <code>/etc/pacman.d/mirrorlist</code>，将以下源置顶：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>Server <span style="color:#f92672">=</span> <span style="color:#f92672">[</span>https://mirrors.tuna.tsinghua.edu.cn/archlinux/$repo/os/$arch<span style="color:#f92672">](</span>https://mirrors.tuna.tsinghua.edu.cn/archlinux/$repo/os/$arch<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>Server <span style="color:#f92672">=</span> <span style="color:#f92672">[</span>https://mirrors.aliyun.com/archlinux/$repo/os/$arch<span style="color:#f92672">](</span>https://mirrors.aliyun.com/archlinux/$repo/os/$arch<span style="color:#f92672">)</span>
+</span></span></code></pre></div><p><em>修改后记得执行 <code>pacman -Syy</code> 强制刷新数据库。</em></p>
+<h3 id="4-基础系统安装-pacstrap">4. 基础系统安装 (Pacstrap)<a hidden class="anchor" aria-hidden="true" href="#4-基础系统安装-pacstrap">#</a></h3>
+<p>这是最关键的一步，我们向空硬盘中灌入操作系统的核心组件。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>pacstrap -K /mnt base linux linux-firmware vim networkmanager sudo man-db
+</span></span></code></pre></div><p><strong>组件解析：</strong></p>
 <ul>
-<li><strong>操作要点</strong>：
-<ul>
-<li>修改完后必须执行 <code>pacman -Syy</code> 强制刷新数据库。</li>
+<li><code>linux</code> &amp; <code>firmware</code>: 也就是 Kernel。没有 Firmware，网卡和显卡可能无法工作。</li>
+<li><code>vim</code>: 系统装好后，必须有编辑器来修改配置（运维的手术刀）。</li>
+<li><code>networkmanager</code>: 提供 <code>nmcli</code>，方便后续管理网络。</li>
 </ul>
-</li>
-</ul>
-<h4 id="3-故障排查经验-story">3. 故障排查经验 (Story)<a hidden class="anchor" aria-hidden="true" href="#3-故障排查经验-story">#</a></h4>
-<ul>
-<li>问题描述：初始化环境时，发现默认源下载速度极慢（约 20KB/s）。</li>
-<li><strong>解决方案</strong>：分析网络链路，通过编辑配置引入清华和阿里云镜像 。</li>
-<li><strong>结果</strong>：下载速度提升至宽带满速，体现了运维人员对<strong>服务可用性</strong>和<strong>网络优化</strong>的意识 。</li>
-</ul>
-<h3 id="第五节基础系统安装-base-system-installation">第五节：基础系统安装 (Base System Installation)<a hidden class="anchor" aria-hidden="true" href="#第五节基础系统安装-base-system-installation">#</a></h3>
-<blockquote>
-<p><strong>场景模拟</strong>：根据业务需求，定制化安装操**📄 场景模拟**：根据业务需求，向空硬盘中定制化灌入操作系统核心组件 。作系统核心组件。</p>
-</blockquote>
-<h4 id="1-执行安装命令">1. 执行安装命令<a hidden class="anchor" aria-hidden="true" href="#1-执行安装命令">#</a></h4>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Bash" data-lang="Bash"><span style="display:flex;"><span>pacstrap -K /mnt base linux linux-firmware vim networkmanager sudo man-db
-</span></span></code></pre></div><p><img alt="image-20260108091716446" loading="lazy" src="/image/arch/image-20260108091716446.png"></p>
-<h4 id="2-组件解析-component-analysis-面试时需解释为什么装这些包"><strong>2. 组件解析 (Component Analysis)</strong> 面试时需解释“为什么装这些包”：<a hidden class="anchor" aria-hidden="true" href="#2-组件解析-component-analysis-面试时需解释为什么装这些包">#</a></h4>
-<table>
-  <thead>
-      <tr>
-          <th><strong>组件名称</strong></th>
-          <th><strong>作用 (面试话术)</strong></th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td><strong>linux &amp; linux-firmware</strong></td>
-          <td><strong>内核与驱动</strong>。没有 firmware，网卡和显卡可能无法工作 。</td>
-      </tr>
-      <tr>
-          <td><strong>vim</strong></td>
-          <td><strong>运维的手术刀</strong>。系统装好后，必须有编辑器来修改配置 。</td>
-      </tr>
-      <tr>
-          <td><strong>networkmanager</strong></td>
-          <td><strong>网络管理工具</strong>。提供 <code>nmcli</code> 命令，方便后续配置网络 。</td>
-      </tr>
-  </tbody>
-</table>
-<hr>
-<h3 id="第六节系统交接与穿越-system-handoff">第六节：系统交接与穿越 (System Handoff)<a hidden class="anchor" aria-hidden="true" href="#第六节系统交接与穿越-system-handoff">#</a></h3>
-<blockquote>
-<p><strong>📄 场景模拟</strong>：安装文件已就绪，现在需要生成“地图”（fstab）并正式“入驻”（chroot）新系统 。</p>
-</blockquote>
-<h4 id="1-生成挂载表-fstab-generation"><strong>1. 生成挂载表 (Fstab Generation)</strong><a hidden class="anchor" aria-hidden="true" href="#1-生成挂载表-fstab-generation">#</a></h4>
-<p><strong>作用</strong>：告诉 Linux 内核，开机时每个分区该挂载到哪里。如果不做这一步，重启后系统无法识别硬盘 。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Bash" data-lang="Bash"><span style="display:flex;"><span>genfstab -U /mnt &gt;&gt; /mnt/etc/fstab
-</span></span></code></pre></div><h4 id="2-验证挂载表-verification--必做-运维铁律修改配置后必须-review"><strong>2. 验证挂载表 (Verification) —— 必做！</strong> <strong>运维铁律</strong>：修改配置后必须 Review。<a hidden class="anchor" aria-hidden="true" href="#2-验证挂载表-verification--必做-运维铁律修改配置后必须-review">#</a></h4>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Bash" data-lang="Bash"><span style="display:flex;"><span>cat /mnt/etc/fstab
-</span></span></code></pre></div><p><img alt="image-20260108092539976" loading="lazy" src="/image/arch/image-20260108092539976.png"></p>
-<ul>
-<li><strong>检查点</strong>：
-<ul>
-<li>看到 <code>UUID=... / ext4</code> (根分区)</li>
-<li>看到 <code>UUID=... /boot vfat</code> (引导分区)</li>
-<li><em>面试加分项</em>：解释为什么用 <strong>UUID</strong>（防止插拔硬盘导致盘符漂移）。</li>
-</ul>
-</li>
-</ul>
-<h4 id="3-穿越进入新系统-chroot">3. 穿越进入新系统 (Chroot)<a hidden class="anchor" aria-hidden="true" href="#3-穿越进入新系统-chroot">#</a></h4>
-<p><strong>作用</strong>：Change Root。将当前的根目录从“安装光盘”切换到“硬盘里的新系统” 。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Bash" data-lang="Bash"><span style="display:flex;"><span>arch-chroot /mnt
-</span></span></code></pre></div><h2 id="-part-3系统核心配置-configuration">🟡 Part 3：系统核心配置 (Configuration)<a hidden class="anchor" aria-hidden="true" href="#-part-3系统核心配置-configuration">#</a></h2>
-<h3 id="第七节系统身份确立-system-identity">第七节：系统身份确立 (System Identity)<a hidden class="anchor" aria-hidden="true" href="#第七节系统身份确立-system-identity">#</a></h3>
-<blockquote>
-<p><strong>场景模拟</strong>：进入新系统后，必须确立它的“身份”（时间、语言、名字）。</p>
-</blockquote>
-<h4 id="1-基础配置命令清单"><strong>1. 基础配置命令清单</strong><a hidden class="anchor" aria-hidden="true" href="#1-基础配置命令清单">#</a></h4>
-<ul>
-<li>
-<p><strong>时区与硬件时间</strong>：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime  
+<h3 id="5-生成-fstab-并切换环境">5. 生成 fstab 并切换环境<a hidden class="anchor" aria-hidden="true" href="#5-生成-fstab-并切换环境">#</a></h3>
+<p><strong>Fstab (File System Table)</strong> 告诉 Linux 内核开机时每个分区该挂载到哪里。如果不生成，重启后系统将找不到硬盘。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>genfstab -U /mnt &gt;&gt; /mnt/etc/fstab
+</span></span></code></pre></div><p><strong>检查点</strong>：执行 <code>cat /mnt/etc/fstab</code>，确保你看到了 <code>UUID=... / ext4</code> 和 <code>UUID=... /boot vfat</code> 的记录。推荐使用 <strong>UUID</strong> 挂载，防止插拔硬盘导致盘符漂移。</p>
+<p>最后，穿越进入新系统：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>arch-chroot /mnt
+</span></span></code></pre></div><hr>
+<h2 id="-phase-3系统核心配置-configuration">🔵 Phase 3：系统核心配置 (Configuration)<a hidden class="anchor" aria-hidden="true" href="#-phase-3系统核心配置-configuration">#</a></h2>
+<p>进入 Chroot 环境后，我们相当于已经在了新系统内部。现在需要确立它的“身份”。</p>
+<h3 id="6-身份与时区">6. 身份与时区<a hidden class="anchor" aria-hidden="true" href="#6-身份与时区">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 1. 设置时区 (上海)</span>
+</span></span><span style="display:flex;"><span>ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 </span></span><span style="display:flex;"><span>hwclock --systohc
-</span></span></code></pre></div></li>
-<li>
-<p><strong>本地化 (Locale)</strong>：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>locale-gen <span style="color:#75715e"># 生成 en_US.UTF-8 和 zh_CN.UTF-8  </span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 2. 本地化设置</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 编辑 /etc/locale.gen 取消 en_US.UTF-8 和 zh_CN.UTF-8 的注释，然后执行：</span>
+</span></span><span style="display:flex;"><span>locale-gen
 </span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;LANG=en_US.UTF-8&#34;</span> &gt; /etc/locale.conf
-</span></span></code></pre></div></li>
-<li>
-<p><strong>主机名与网络身份</strong>：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;QIZHI&#34;</span> &gt; /etc/hostname
-</span></span></code></pre></div></li>
-<li>
-<p><strong>Root 密码</strong>：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>passwd
-</span></span></code></pre></div></li>
-</ul>
-<p><img alt="image-20260108093936807" loading="lazy" src="/image/arch/image-20260108093936807.png"></p>
-<h3 id="第八节引导程序安装-the-bootloader---grub">第八节：引导程序安装 (The Bootloader - GRUB)<a hidden class="anchor" aria-hidden="true" href="#第八节引导程序安装-the-bootloader---grub">#</a></h3>
-<blockquote>
-<p><strong>核心考点</strong>：这是决定电脑开机能否找到 Linux 的关键一步。</p>
-</blockquote>
-<h4 id="1-安装-grub-到-efi-分区">1. 安装 GRUB 到 EFI 分区<a hidden class="anchor" aria-hidden="true" href="#1-安装-grub-到-efi-分区">#</a></h4>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>grub-install --target<span style="color:#f92672">=</span>x86_64-efi --efi-directory<span style="color:#f92672">=</span>/boot --bootloader-id<span style="color:#f92672">=</span>GRUB
-</span></span></code></pre></div><ul>
-<li><strong>✅ 关键验收标准 (Key Output)</strong>：
-<ul>
-<li>终端显示：<strong><code>Installation finished. No error reported.</code></strong></li>
-<li><em>面试话术</em>：看到这句话，说明 GRUB 的 <code>.efi</code> 文件已经成功写入了 EFI 分区，主板已经认识这个系统了。</li>
-</ul>
-</li>
-</ul>
-<h4 id="2-生成-grub-配置文件">2. 生成 GRUB 配置文件<a hidden class="anchor" aria-hidden="true" href="#2-生成-grub-配置文件">#</a></h4>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>grub-mkconfig -o /boot/grub/grub.cfg
-</span></span></code></pre></div><p><img alt="image-20260108094332151" loading="lazy" src="/image/arch/image-20260108094332151.png"></p>
-<p><strong>✅ 关键验收标准 (Key Output)</strong>：</p>
-<ul>
-<li>终端显示：<code>Found linux image: /boot/vmlinuz-linux</code></li>
-<li>终端显示：<code>Found initrd image: /boot/initramfs-linux.img</code></li>
-<li><em>面试话术</em>：这步是为了让 GRUB 自动扫描 <code>/boot</code> 目录，找到 Linux 内核的位置，并生成启动菜单。如果没扫到内核，开机就会进 <code>grub rescue</code> 模式。</li>
-</ul>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 3. 设置主机名</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;QIZHI-ARCH&#34;</span> &gt; /etc/hostname
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 4. 设置 Root 密码</span>
+</span></span><span style="display:flex;"><span>passwd
+</span></span></code></pre></div><h3 id="7-引导程序安装-grub">7. 引导程序安装 (GRUB)<a hidden class="anchor" aria-hidden="true" href="#7-引导程序安装-grub">#</a></h3>
+<p>这是决定电脑开机能否找到 Linux 的最后一步。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 安装 GRUB 到 EFI 分区</span>
+</span></span><span style="display:flex;"><span>grub-install --target<span style="color:#f92672">=</span>x86_64-efi --efi-directory<span style="color:#f92672">=</span>/boot --bootloader-id<span style="color:#f92672">=</span>GRUB
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 生成配置文件</span>
+</span></span><span style="display:flex;"><span>grub-mkconfig -o /boot/grub/grub.cfg
+</span></span></code></pre></div><p><strong>验收标准</strong>：
+看到 <code>Found linux image: /boot/vmlinuz-linux</code> 和 <code>Found initrd image</code>，说明 GRUB 成功扫描到了我们刚才安装的内核。</p>
 <hr>
-<h2 id="-part-4收尾与重启-finalize">🏁 Part 4：收尾与重启 (Finalize)<a hidden class="anchor" aria-hidden="true" href="#-part-4收尾与重启-finalize">#</a></h2>
-<blockquote>
-<p><strong>当前操作指引</strong>：你的系统已经全部装好了！现在我们需要优雅地退出并重启。</p>
-</blockquote>
-<p>请在终端依次执行以下最后三个命令：</p>
+<h2 id="-phase-4收尾与重启">🏁 Phase 4：收尾与重启<a hidden class="anchor" aria-hidden="true" href="#-phase-4收尾与重启">#</a></h2>
+<p>恭喜，系统构建完成。现在我们需要优雅地退出。</p>
 <ol>
-<li>
-<p><strong>退出新系统</strong> (回到安装盘环境)：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>exit
-</span></span></code></pre></div></li>
-<li>
-<p><strong>卸载分区</strong> (确保数据写入磁盘，防止文件损坏)：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>umount -R /mnt
-</span></span></code></pre></div></li>
-<li>
-<p><strong>卸载分区</strong> (确保数据写入磁盘，防止文件损坏)：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>reboot
-</span></span></code></pre></div></li>
+<li><strong>退出 Chroot</strong>：<code>exit</code></li>
+<li><strong>卸载分区</strong>：<code>umount -R /mnt</code> (确保数据完全写入磁盘)</li>
+<li><strong>重启</strong>：<code>reboot</code></li>
 </ol>
-<p><img alt="image-20260108133246371" loading="lazy" src="/image/arch/image-20260108133246371.png"></p>
+<p>拔掉安装介质，迎接你的全新 Arch Linux 吧！🐧</p>
 
 
   </div>
@@ -587,7 +400,8 @@ ping -c 3 baidu.com
     <ul class="post-tags">
       <li><a href="http://localhost:1313/tags/linux/">Linux</a></li>
       <li><a href="http://localhost:1313/tags/arch/">Arch</a></li>
-      <li><a href="http://localhost:1313/tags/ops/">Ops</a></li>
+      <li><a href="http://localhost:1313/tags/devops/">DevOps</a></li>
+      <li><a href="http://localhost:1313/tags/kernel/">Kernel</a></li>
     </ul>
   </footer>
 </article>
@@ -606,7 +420,56 @@ ping -c 3 baidu.com
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
         <path d="M12 6H0l6-6z" />
     </svg>
-</a>
+</a><script>
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        if (window.innerWidth < 1300) return;
+
+        const toc = document.querySelector('.toc');
+        if (!toc) return;
+
+        const listItems = toc.querySelectorAll('li');
+
+        listItems.forEach(li => {
+            const childUl = li.querySelector('ul');
+
+            
+            if (childUl) {
+                const btn = document.createElement('span');
+                
+                btn.className = 'toc-arrow';
+                btn.innerText = '▶';
+
+                
+                li.insertBefore(btn, li.firstChild);
+
+                
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    
+                    li.classList.toggle('is-active');
+                });
+            } else {
+                
+                const spacer = document.createElement('span');
+                spacer.className = 'toc-arrow';
+                spacer.style.visibility = 'hidden';
+                spacer.innerText = '▶';
+                li.insertBefore(spacer, li.firstChild);
+            }
+        });
+
+        
+        const activeLink = toc.querySelector('a[href="' + location.hash + '"]');
+        if(activeLink) {
+            let parentLi = activeLink.closest('li');
+            while(parentLi) {
+                parentLi.classList.add('is-active');
+                parentLi = parentLi.parentElement.closest('li');
+            }
+        }
+    });
+</script>
 
 <script>
     let menu = document.getElementById('menu');

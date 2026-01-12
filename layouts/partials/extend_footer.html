@@ -1,0 +1,50 @@
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 仅在电脑宽屏下执行
+        if (window.innerWidth < 1300) return;
+
+        const toc = document.querySelector('.toc');
+        if (!toc) return;
+
+        const listItems = toc.querySelectorAll('li');
+
+        listItems.forEach(li => {
+            const childUl = li.querySelector('ul');
+
+            // 1. 如果有子菜单，添加箭头按钮
+            if (childUl) {
+                const btn = document.createElement('span');
+                // ✅ 关键修正：类名必须和 CSS 里的 .toc-arrow 对应！
+                btn.className = 'toc-arrow';
+                btn.innerText = '▶';
+
+                // ✅ 关键修正：插入到 li 的最前面，确保在文字左边
+                li.insertBefore(btn, li.firstChild);
+
+                // 2. 点击事件
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    // ✅ 关键修正：状态类名必须和 CSS 里的 .is-active 对应！
+                    li.classList.toggle('is-active');
+                });
+            } else {
+                // 占位符 (保持对齐)
+                const spacer = document.createElement('span');
+                spacer.className = 'toc-arrow';
+                spacer.style.visibility = 'hidden';
+                spacer.innerText = '▶';
+                li.insertBefore(spacer, li.firstChild);
+            }
+        });
+
+        // 自动展开当前章节
+        const activeLink = toc.querySelector('a[href="' + location.hash + '"]');
+        if(activeLink) {
+            let parentLi = activeLink.closest('li');
+            while(parentLi) {
+                parentLi.classList.add('is-active');
+                parentLi = parentLi.parentElement.closest('li');
+            }
+        }
+    });
+</script>
