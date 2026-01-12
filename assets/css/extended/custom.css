@@ -1,0 +1,13 @@
+/* 强制图片居中显示 */
+.post-content img {
+    display: block;
+    margin: 1.5rem auto; /* 上下留白，左右自动居中 */
+    border-radius: 8px;  /* 图片圆角 */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2); /* 淡淡的阴影，增加立体感 */
+    max-width: 100%;     /* 防止图片撑破手机屏幕 */
+}
+
+/* 稍微调整一下文章宽度的阅读体验 */
+.main {
+    max-width: calc(var(--main-width) + var(--gap) * 2);
+}

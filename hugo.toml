@@ -3,5 +3,72 @@ languageCode = 'zh-cn'
 title = 'QIZHI Tech Blog'
 theme = 'PaperMod'
 
+# 启用搜索功能的必要配置
+[outputs]
+    home = ["HTML", "RSS", "JSON"]
+
 [params]
-    defaultTheme = "auto"
+    env = "production"
+    title = "QIZHI Tech Blog"
+    description = "Focus on C++, Linux Kernel, and System Security."
+    keywords = ["C++", "Linux", "Fedora", "Security"]
+    author = "QIZHI"
+    
+    # 界面设置
+    defaultTheme = "auto" # 跟随系统深色模式
+    ShowShareButtons = true # 文章底部显示分享按钮
+    ShowReadingTime = true  # 显示阅读时长
+    ShowBreadCrumbs = true  # 显示面包屑导航
+    displayFullContent = false # 首页只显示摘要
+
+    # 🏠 首页个人简介模式 (Profile Mode)
+    [params.profileMode]
+    enabled = true
+    title = "QIZHI"
+    subtitle = "💻 Linux System Developer | C++ Enthusiast"
+    imageUrl = "/image/avatar.png" # ⚠️ 稍后我们需要放一张头像图片到这里
+    imageTitle = "QIZHI"
+    imageWidth = 120
+    imageHeight = 120
+    
+    # 首页按钮
+    [[params.profileMode.buttons]]
+    name = "My Projects"
+    url = "https://github.com/qizhi125"
+    [[params.profileMode.buttons]]
+    name = "Arch Linux Note" # 你的核心文章，直接放入口
+    url = "/posts/arch-linux/"
+
+    # 🔗 社交图标 (显示在简介下方)
+    [[params.socialIcons]]
+    name = "github"
+    url = "https://github.com/qizhi125"
+    [[params.socialIcons]]
+    name = "bilibili"
+    url = "https://space.bilibili.com/349491449"
+    [[params.socialIcons]]
+    name = "email"
+    url = "mailto:qizhi1215w@gmail.com"
+
+# 🧭 顶部导航栏菜单
+[menu]
+    [[menu.main]]
+        identifier = "home"
+        name = "Home"
+        url = "/"
+        weight = 10
+    [[menu.main]]
+        identifier = "archives"
+        name = "Archives"
+        url = "/archives"
+        weight = 20
+    [[menu.main]]
+        identifier = "tags"
+        name = "Tags"
+        url = "/tags"
+        weight = 30
+    [[menu.main]]
+        identifier = "search"
+        name = "Search"
+        url = "/search"
+        weight = 40
