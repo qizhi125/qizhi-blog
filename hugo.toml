@@ -13,8 +13,10 @@ theme = 'PaperMod'
     description = "Focus on C++, Linux Kernel, and System Security."
     keywords = ["C++", "Linux", "Fedora", "Security"]
     author = "QIZHI"
+
+    # 界面设置
     defaultTheme = "auto"
-    ShowShareButtons = true
+    ShowShareButtons = false
     ShowReadingTime = true
     ShowBreadCrumbs = true
     displayFullContent = false
@@ -23,22 +25,23 @@ theme = 'PaperMod'
     [params.profileMode]
     enabled = false
 
-    # ✅ 开启“简介+文章”模式
+    # ✅ 开启 HomeInfo 模式
     [params.homeInfoParams]
-    Title = "QIZHI"
-    # 这里用 Markdown + HTML 完美复刻
+    Title = ""
+
+    # 👇 关键修改：这里的每一行都必须顶格写，前面不能有空格！
     Content = """
-![avatar](/image/avatar.png)
+<img src="/image/avatar.png" alt="avatar" style="width:120px;height:120px;border-radius:50%;margin:0 auto 1rem auto;box-shadow: 0 4px 10px rgba(0,0,0,0.1);display:block;">
 
-<h1>QIZHI</h1>
+<h1 style="font-size: 2rem; margin-bottom: 0.5rem;">QIZHI</h1>
 
-💻 Linux System Developer | C++ Enthusiast
+<p style="margin-bottom: 1.5rem; color: var(--secondary);">💻 Linux System Developer | C++ Enthusiast</p>
 
-<div class="buttons">
-    <a class="button" href="https://github.com/qizhi125" rel="noopener" title="My Projects">
+<div class="buttons" style="display: flex; justify-content: center; gap: 10px;">
+    <a class="button" href="https://github.com/qizhi125" rel="noopener" title="My Projects" style="text-decoration: none;">
         <span class="button-inner">My Projects</span>
     </a>
-    <a class="button" href="/posts/arch-linux/" rel="noopener" title="Arch Linux Note">
+    <a class="button" href="/posts/arch-linux/" rel="noopener" title="Arch Linux Note" style="text-decoration: none;">
         <span class="button-inner">Arch Linux Note</span>
     </a>
 </div>
@@ -77,3 +80,8 @@ theme = 'PaperMod'
         name = "Search"
         url = "/search"
         weight = 40
+
+[markup]
+    [markup.goldmark]
+        [markup.goldmark.renderer]
+            unsafe = true
