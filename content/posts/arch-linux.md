@@ -1,8 +1,10 @@
 +++
-date = '2026-01-12T12:57:56+08:00'
-draft = true
-title = 'Hello World'
+date = '2026-01-11T12:00:00+08:00'
+draft = false 
+title = 'Linux 运维实战演练：Arch Linux 从零构建'
+tags = ["Linux", "Arch", "Ops"]
 +++
+
 # 🐧 Linux 运维实战演练：Arch Linux 从零构建 (PDF 完整复刻版)
 
 **文档来源**：实战演练 - Arch Linux 从零构建.pdf

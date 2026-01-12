@@ -6,6 +6,28 @@
     <description>Recent content in Tags on QIZHI Tech Blog</description>
     <generator>Hugo -- 0.152.2</generator>
     <language>zh-cn</language>
+    <lastBuildDate>Sun, 11 Jan 2026 12:00:00 +0800</lastBuildDate>
     <atom:link href="http://localhost:38259/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Arch</title>
+      <link>http://localhost:38259/tags/arch/</link>
+      <pubDate>Sun, 11 Jan 2026 12:00:00 +0800</pubDate>
+      <guid>http://localhost:38259/tags/arch/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Linux</title>
+      <link>http://localhost:38259/tags/linux/</link>
+      <pubDate>Sun, 11 Jan 2026 12:00:00 +0800</pubDate>
+      <guid>http://localhost:38259/tags/linux/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Ops</title>
+      <link>http://localhost:38259/tags/ops/</link>
+      <pubDate>Sun, 11 Jan 2026 12:00:00 +0800</pubDate>
+      <guid>http://localhost:38259/tags/ops/</guid>
+      <description></description>
+    </item>
   </channel>
 </rss>

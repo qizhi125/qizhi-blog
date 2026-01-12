@@ -13,33 +13,38 @@ theme = 'PaperMod'
     description = "Focus on C++, Linux Kernel, and System Security."
     keywords = ["C++", "Linux", "Fedora", "Security"]
     author = "QIZHI"
-    
-    # 界面设置
-    defaultTheme = "auto" # 跟随系统深色模式
-    ShowShareButtons = true # 文章底部显示分享按钮
-    ShowReadingTime = true  # 显示阅读时长
-    ShowBreadCrumbs = true  # 显示面包屑导航
-    displayFullContent = false # 首页只显示摘要
+    defaultTheme = "auto"
+    ShowShareButtons = true
+    ShowReadingTime = true
+    ShowBreadCrumbs = true
+    displayFullContent = false
 
-    # 🏠 首页个人简介模式 (Profile Mode)
+    # ❌ 禁用 ProfileMode (它不显示文章列表)
     [params.profileMode]
-    enabled = true
-    title = "QIZHI"
-    subtitle = "💻 Linux System Developer | C++ Enthusiast"
-    imageUrl = "/image/avatar.png" # ⚠️ 稍后我们需要放一张头像图片到这里
-    imageTitle = "QIZHI"
-    imageWidth = 120
-    imageHeight = 120
-    
-    # 首页按钮
-    [[params.profileMode.buttons]]
-    name = "My Projects"
-    url = "https://github.com/qizhi125"
-    [[params.profileMode.buttons]]
-    name = "Arch Linux Note" # 你的核心文章，直接放入口
-    url = "/posts/arch-linux/"
+    enabled = false
 
-    # 🔗 社交图标 (显示在简介下方)
+    # ✅ 开启“简介+文章”模式
+    [params.homeInfoParams]
+    Title = "QIZHI"
+    # 这里用 Markdown + HTML 完美复刻
+    Content = """
+    ![avatar](/image/avatar.png)
+
+    <h1>QIZHI</h1>
+
+    💻 Linux System Developer | C++ Enthusiast
+
+    <div class="buttons">
+        <a class="button" href="https://github.com/qizhi125" rel="noopener" title="My Projects">
+            <span class="button-inner">My Projects</span>
+        </a>
+        <a class="button" href="/posts/arch-linux/" rel="noopener" title="Arch Linux Note">
+            <span class="button-inner">Arch Linux Note</span>
+        </a>
+    </div>
+    """
+
+    # 🔗 社交图标
     [[params.socialIcons]]
     name = "github"
     url = "https://github.com/qizhi125"
