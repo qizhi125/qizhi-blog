@@ -1,7 +1,7 @@
 +++
 date = '2026-01-11T12:00:00+08:00'
 draft = false
-title = 'Linux 运维实战：手动构建 Arch Linux 生产环境'
+title = 'Linux 运维学习：手动构建 Arch Linux 生产环境'
 tags = ["Linux", "Arch", "DevOps", "Kernel"]
 summary = "记录纯命令行环境下手动安装 Arch Linux 的核心流程，梳理磁盘分区、挂载逻辑与系统引导配置环节。"
 
