@@ -1,189 +1,108 @@
 +++
 date = '2026-01-11T12:00:00+08:00'
 draft = false
-title = 'Linux 运维实战：从零构建 Arch Linux 生产环境'
+title = 'Linux 运维实战：手动构建 Arch Linux 生产环境'
 tags = ["Linux", "Arch", "DevOps", "Kernel"]
-series = ["Arch Linux 实战笔记"]
-summary = "抛弃图形化安装器，深入理解 Linux 系统的启动流程与组件构成。本文记录了一次标准的 Arch Linux 手动构建过程，包含磁盘分区策略、内核安装及 GRUB 引导配置。"
+summary = "记录纯命令行环境下手动安装 Arch Linux 的核心流程，梳理磁盘分区、挂载逻辑与系统引导配置环节。"
+
 +++
 
-> **写在前面**：
-> Arch Linux 的手动安装过程是理解 Linux 发行版构成（Kernel, Userland, Bootloader）的绝佳实践。
-> 本文基于实战环境（GNOME Boxes / ISO），记录了从裸金属环境到最小化可用系统的完整构建流程。
+>手动安装 Arch Linux 是理解 Linux 底层组件（Kernel、Userland、Bootloader）协同工作流程的有效方式。
+> 本文记录在命令行环境下的核心构建步骤及注意事项。
 
----
+## 1. 连通性测试与分区准备
 
-## 🟢 Phase 1：环境初始化 (Infrastructure)
-
-在开始触碰磁盘之前，我们需要确保“救援环境”本身是健康且网络通畅的。
-
-### 1. 网络连通性检查
-
-拿到一台新服务器或排查故障时，第一件事永远是检查网络。
+确保救援/安装环境网络连通，这是拉取系统核心包的前提。
 
 ```bash
 ping -c 3 baidu.com
 ```
 
-**结果分析：**
+> **提示**：若提示 `Temporary failure in name resolution`，通常为 DNS 解析失败或网卡未启动，在 ISO 环境下可尝试执行 `systemctl start NetworkManager`。
 
-* ✅ **正常**：显示 `64 bytes from ...`，说明 DNS 解析正常，网卡已获取 IP。
-* ❌ **异常**：显示 `Temporary failure in name resolution`，通常意味着 DNS 解析失败或网卡未启动。
+确认目标磁盘设备（如 `/dev/vda`），使用 `cfdisk` 执行 GPT 分区。
 
-> **💡 Troubleshooting**：
-> 如果网络不通，在 Arch ISO 环境下可尝试手动启动网络管理器：
-> `systemctl start NetworkManager`
+**分区方案建议：**
 
-### 2. 磁盘分区规划
+- **vda1 (512M)**: EFI System。用于存放 UEFI 引导程序（GRUB）。
+- **vda2 (2G)**: Linux swap。交换分区，防止物理内存耗尽触发 OOM 导致系统崩溃。
+- **vda3 (剩余)**: Linux filesystem。根分区。
 
+> **提示**：在 `cfdisk` 界面中，完成分区划分后必须选择 `Write` 并输入 `yes`，否则分区表不会真正写入磁盘。
 
-**核心工具**：`lsblk` (查看), `cfdisk` (图形化分区)。
+## 2. 格式化与挂载顺序
 
-#### Step 1: 检查磁盘状态
+根据 UEFI 规范及 Linux 运行要求，为不同分区写入对应的文件系统。
 
-```bash
-lsblk
+```Bash
+mkfs.fat -F32 /dev/vda1              # 引导分区必须为 FAT32 格式
+mkswap /dev/vda2 && swapon /dev/vda2 # 初始化并启用 Swap
+mkfs.ext4 /dev/vda3                  # 根分区使用 ext4 格式
 ```
 
-在操作前，务必确认硬盘设备名（如 `/dev/vda` 或 `/dev/sda`），防止误格盘。此时应该看到一个干净的 `disk` 设备，没有任何 `part` 分支。
+**挂载逻辑**：必须遵循先挂载根目录，再创建挂载点挂载子目录的顺序。
 
-#### Step 2: 执行分区 (GPT 方案)
-
-采用现代服务器标准的 **GPT 分区表**（配合 UEFI 启动）。
-
-```bash
-cfdisk /dev/vda
+```Bash
+mount /dev/vda3 /mnt          # 先挂载根目录
+mkdir /mnt/boot               # 创建引导区挂载点
+mount /dev/vda1 /mnt/boot     # 挂载引导分区
 ```
 
-**分区方案如下：**
+## 3. 部署核心系统与生成 fstab
 
-| 分区 | 容量 | 类型 | 作用 |
-| --- | --- | --- | --- |
-| **vda1** | 512M | EFI System | **引导区**。存放 GRUB 和内核镜像，UEFI 固件只认它。 |
-| **vda2** | 2G | Linux swap | **交换分区**。防止内存溢出 (OOM) 导致系统崩溃。 |
-| **vda3** | 剩余 | Linux filesystem | **根分区 (/)**。存放系统文件与用户数据。 |
+在同步软件包之前，修改 `/etc/pacman.d/mirrorlist`，将国内镜像源（如清华源、阿里云源）置顶，并执行 `pacman -Syy` 刷新。
 
-> **⚠️ 注意**：操作完成后，务必选择 `[ Write ]` 并输入 `yes` 写入更改，否则一切操作仅停留在内存中。
+通过 `pacstrap` 将基础系统包安装至目标挂载点：
 
-#### Step 3: 格式化与挂载
-
-有了“分区”，还需要“文件系统”。
-
-```bash
-# 1. 引导分区 -> 必须 FAT32 (UEFI 规范强制要求)
-mkfs.fat -F32 /dev/vda1
-
-# 2. 交换分区 -> 初始化并启用
-mkswap /dev/vda2
-swapon /dev/vda2
-
-# 3. 根分区 -> 使用 EXT4 (最稳健的 Linux 文件系统)
-mkfs.ext4 /dev/vda3
-```
-
-**挂载顺序：** 必须遵循 **先根后子** 的顺序。
-
-```bash
-mount /dev/vda3 /mnt          # 1. 先挂根目录
-mkdir /mnt/boot               # 2. 再建挂载点
-mount /dev/vda1 /mnt/boot     # 3. 最后挂引导分区
-```
-
----
-
-## 🟡 Phase 2：核心系统构建 (System Build)
-
-### 3. 镜像源优化
-
-默认的源在海外，速度可能极慢。为了保证生产效率，需要配置国内镜像。
-
-编辑 `/etc/pacman.d/mirrorlist`，将以下源置顶：
-
-```bash
-Server = [https://mirrors.tuna.tsinghua.edu.cn/archlinux/$repo/os/$arch](https://mirrors.tuna.tsinghua.edu.cn/archlinux/$repo/os/$arch)
-Server = [https://mirrors.aliyun.com/archlinux/$repo/os/$arch](https://mirrors.aliyun.com/archlinux/$repo/os/$arch)
-```
-
-*修改后记得执行 `pacman -Syy` 强制刷新数据库。*
-
-### 4. 基础系统安装 (Pacstrap)
-
-这是最关键的一步，需要向空硬盘中灌入操作系统的核心组件。
-
-```bash
+```Bash
 pacstrap -K /mnt base linux linux-firmware vim networkmanager sudo man-db
 ```
 
-**组件解析：**
+> **提示**：`linux-firmware` 和 `networkmanager` 为必选项，缺失会导致新系统重启后无网卡硬件驱动或无法管理网络。
 
-* `linux` & `firmware`: 也就是 Kernel。没有 Firmware，网卡和显卡可能无法工作。
-* `vim`: 系统装好后，必须有编辑器来修改配置（运维的手术刀）。
-* `networkmanager`: 提供 `nmcli`，方便后续管理网络。
+生成 `fstab` 文件以记录文件系统挂载信息：
 
-### 5. 生成 fstab 并切换环境
-
-**Fstab (File System Table)** 告诉 Linux 内核开机时每个分区该挂载到哪里。如果不生成，重启后系统将找不到硬盘。
-
-```bash
+```Bash
 genfstab -U /mnt >> /mnt/etc/fstab
 ```
 
-**检查点**：执行 `cat /mnt/etc/fstab`，确保能够看到 `UUID=... / ext4` 和 `UUID=... /boot vfat` 的记录。推荐使用 **UUID** 挂载，防止插拔硬盘导致盘符漂移。
+> **提示**：建议使用 `-U` 参数以 UUID 方式记录挂载点，避免未来硬件接口变动导致盘符（如 vda 变为 sda）漂移，引发系统无法启动。
 
-最后，穿越进入新系统：
+## 4. 切换环境与系统配置
 
-```bash
-arch-chroot /mnt
-```
+使用 `arch-chroot /mnt` 切换至新系统环境，此时的终端操作将直接作用于新系统。
 
----
+**基础配置命令清单：**
 
-## 🔵 Phase 3：系统核心配置 (Configuration)
-
-进入 Chroot 环境后，相当于已经在了新系统内部。现在需要确立它的“身份”。
-
-### 6. 身份与时区
-
-```bash
-# 1. 设置时区 (上海)
+```Bash
+# 1. 时区与硬件时间同步
 ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 hwclock --systohc
 
-# 2. 本地化设置
-# 编辑 /etc/locale.gen 取消 en_US.UTF-8 和 zh_CN.UTF-8 的注释，然后执行：
+# 2. 本地化配置 (取消 en_US.UTF-8 注释并生成)
+sed -i 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
 locale-gen
 echo "LANG=en_US.UTF-8" > /etc/locale.conf
 
-# 3. 设置主机名
-echo "username@arch" > /etc/hostname
-
-# 4. 设置 Root 密码
+# 3. 主机名与 Root 密码
+echo "arch-server" > /etc/hostname
 passwd
 ```
 
-### 7. 引导程序安装 (GRUB)
+## 5. 引导程序配置与收尾
 
-这是决定电脑开机能否找到 Linux 的最后一步。
+安装并配置 GRUB 引导程序，这是系统能够独立启动的关键组件。
 
-```bash
-# 安装 GRUB 到 EFI 分区
+```Bash
 grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
-
-# 生成配置文件
 grub-mkconfig -o /boot/grub/grub.cfg
 ```
 
-**验收标准**：
-看到 `Found linux image: /boot/vmlinuz-linux` 和 `Found initrd image`，说明 GRUB 成功扫描到了我们刚才安装的内核。
+> **提示**：执行 `grub-mkconfig` 时，务必观察终端输出。若包含 `Found linux image: /boot/vmlinuz-linux`，则证明引导程序已成功扫描并识别到刚才安装的内核。
 
----
+配置完成后，执行安全的退出与重启流程：
 
-## 🏁 Phase 4：收尾与重启
+1. `exit`（退出 chroot 虚拟环境）
+2. `umount -R /mnt`（递归卸载挂载点，确保缓存数据完全刷入磁盘）
+3. `reboot`（重启系统）
 
-恭喜，系统构建完成。现在我们需要优雅地退出。
-
-1. **退出 Chroot**：`exit`
-2. **卸载分区**：`umount -R /mnt` (确保数据完全写入磁盘)
-3. **重启**：`reboot`
-
-拔掉安装介质，迎接你的全新 Arch Linux 吧！🐧
