@@ -7,7 +7,7 @@ summary = "记录纯命令行环境下手动安装 Arch Linux 的核心流程，
 
 +++
 
->手动安装 Arch Linux 是理解 Linux 底层组件（Kernel、Userland、Bootloader）协同工作流程的有效方式。
+> 手动安装 Arch Linux 是理解 Linux 底层组件（Kernel、Userland、Bootloader）协同工作流程的有效方式。
 > 本文记录在命令行环境下的核心构建步骤及注意事项。
 
 ## 1. 连通性测试与分区准备
