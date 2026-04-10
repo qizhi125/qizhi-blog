@@ -6,14 +6,21 @@
     <description>Recent content in Posts on QIZHI Tech Blog</description>
     <generator>Hugo -- 0.152.2</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sun, 11 Jan 2026 12:00:00 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 04 Apr 2026 18:00:00 +0800</lastBuildDate>
     <atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Linux 运维实战：从零构建 Arch Linux 生产环境</title>
+      <title>C&#43;&#43; 学习笔记：内存底层机制与网络协议解析</title>
+      <link>http://localhost:1313/posts/cpp-memory-network-basics/</link>
+      <pubDate>Sat, 04 Apr 2026 18:00:00 +0800</pubDate>
+      <guid>http://localhost:1313/posts/cpp-memory-network-basics/</guid>
+      <description>重新审视 C++ 基础体系，记录从变量内存实质、指针操作规范到连续内存游走逻辑，以及网络协议解析中的结构体对齐与大小端转换。</description>
+    </item>
+    <item>
+      <title>Linux 运维学习：手动构建 Arch Linux 生产环境</title>
       <link>http://localhost:1313/posts/arch-linux/</link>
       <pubDate>Sun, 11 Jan 2026 12:00:00 +0800</pubDate>
       <guid>http://localhost:1313/posts/arch-linux/</guid>
-      <description>抛弃图形化安装器，深入理解 Linux 系统的启动流程与组件构成。本文记录了一次标准的 Arch Linux 手动构建过程，包含磁盘分区策略、内核安装及 GRUB 引导配置。</description>
+      <description>记录纯命令行环境下手动安装 Arch Linux 的核心流程，梳理磁盘分区、挂载逻辑与系统引导配置环节。</description>
     </item>
   </channel>
 </rss>

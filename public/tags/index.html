@@ -10,7 +10,7 @@
 <meta name="description" content="Focus on C&#43;&#43;, Linux Kernel, and System Security.">
 <meta name="author" content="QIZHI">
 <link rel="canonical" href="http://localhost:1313/tags/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.4fc51aea4bb2981f0e541a9a160ac629810565a12583c7898887f4a9861b6caa.css" integrity="sha256-T8Ua6kuymB8OVBqaFgrGKYEFZaElg8eJiIf0qYYbbKo=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.60dfad1771c23d06a6229607de84aeb8ebb10daed863977c36e8dfd68fe8dc71.css" integrity="sha256-YN&#43;tF3HCPQamIpYH3oSuuOuxDa7YY5d8Nujf1o/o3HE=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
@@ -144,6 +144,9 @@
         <a href="http://localhost:1313/tags/arch/">Arch <sup><strong><sup>1</sup></strong></sup> </a>
     </li>
     <li>
+        <a href="http://localhost:1313/tags/c&#43;&#43;/">C&#43;&#43; <sup><strong><sup>1</sup></strong></sup> </a>
+    </li>
+    <li>
         <a href="http://localhost:1313/tags/devops/">DevOps <sup><strong><sup>1</sup></strong></sup> </a>
     </li>
     <li>
@@ -151,6 +154,12 @@
     </li>
     <li>
         <a href="http://localhost:1313/tags/linux/">Linux <sup><strong><sup>1</sup></strong></sup> </a>
+    </li>
+    <li>
+        <a href="http://localhost:1313/tags/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">内存管理 <sup><strong><sup>1</sup></strong></sup> </a>
+    </li>
+    <li>
+        <a href="http://localhost:1313/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/">网络编程 <sup><strong><sup>1</sup></strong></sup> </a>
     </li>
 </ul>
     </main>
@@ -168,55 +177,156 @@
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
         <path d="M12 6H0l6-6z" />
     </svg>
-</a><script>
-    document.addEventListener('DOMContentLoaded', function() {
+</a><div id="scroll-progress-bar"></div>
+
+<script>
+    (function() {
         
-        if (window.innerWidth < 1300) return;
+        function initTOC() {
+            if (window.innerWidth < 1300) return;
+            const toc = document.querySelector('.toc');
+            if (!toc) return;
 
-        const toc = document.querySelector('.toc');
-        if (!toc) return;
+            const listItems = toc.querySelectorAll('li');
+            listItems.forEach(li => {
+                const childUl = li.querySelector('ul');
+                if (childUl) {
+                    const btn = document.createElement('span');
+                    btn.className = 'toc-arrow';
+                    btn.innerText = '▶';
+                    li.insertBefore(btn, li.firstChild);
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        li.classList.toggle('is-active');
+                    });
+                } else {
+                    const spacer = document.createElement('span');
+                    spacer.className = 'toc-arrow';
+                    spacer.style.visibility = 'hidden';
+                    spacer.innerText = '▶';
+                    li.insertBefore(spacer, li.firstChild);
+                }
+            });
 
-        const listItems = toc.querySelectorAll('li');
-
-        listItems.forEach(li => {
-            const childUl = li.querySelector('ul');
-
-            
-            if (childUl) {
-                const btn = document.createElement('span');
-                
-                btn.className = 'toc-arrow';
-                btn.innerText = '▶';
-
-                
-                li.insertBefore(btn, li.firstChild);
-
-                
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    
-                    li.classList.toggle('is-active');
-                });
-            } else {
-                
-                const spacer = document.createElement('span');
-                spacer.className = 'toc-arrow';
-                spacer.style.visibility = 'hidden';
-                spacer.innerText = '▶';
-                li.insertBefore(spacer, li.firstChild);
-            }
-        });
-
-        
-        const activeLink = toc.querySelector('a[href="' + location.hash + '"]');
-        if(activeLink) {
-            let parentLi = activeLink.closest('li');
-            while(parentLi) {
-                parentLi.classList.add('is-active');
-                parentLi = parentLi.parentElement.closest('li');
+            const activeLink = toc.querySelector('a[href="' + location.hash + '"]');
+            if (activeLink) {
+                let parentLi = activeLink.closest('li');
+                while (parentLi) {
+                    parentLi.classList.add('is-active');
+                    parentLi = parentLi.parentElement.closest('li');
+                }
             }
         }
-    });
+
+        
+        function initBackToTop() {
+            const topLink = document.querySelector('.top-link');
+            if (!topLink) return;
+
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 300) {
+                    topLink.classList.add('visible');
+                } else {
+                    topLink.classList.remove('visible');
+                }
+            });
+
+            topLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        }
+
+        
+        function initCopyButtons() {
+            const pres = document.querySelectorAll('.post-content pre');
+            pres.forEach(pre => {
+                if (pre.querySelector('.copy-code-button')) return;
+                const button = document.createElement('button');
+                button.className = 'copy-code-button';
+                button.innerHTML = '📋';
+                button.setAttribute('aria-label', '复制代码');
+                button.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    const code = pre.querySelector('code') || pre;
+                    const text = code.innerText;
+                    try {
+                        await navigator.clipboard.writeText(text);
+                        button.innerHTML = '✓';
+                        button.classList.add('copied');
+                        setTimeout(() => {
+                            button.innerHTML = '📋';
+                            button.classList.remove('copied');
+                        }, 2000);
+                    } catch (err) {
+                        button.innerHTML = '❌';
+                        setTimeout(() => {
+                            button.innerHTML = '📋';
+                        }, 1000);
+                    }
+                });
+                pre.style.position = 'relative';
+                pre.appendChild(button);
+            });
+        }
+
+        
+        function initScrollProgress() {
+            const bar = document.getElementById('scroll-progress-bar');
+            if (!bar) return;
+            window.addEventListener('scroll', () => {
+                const winScroll = document.documentElement.scrollTop;
+                const height = document.documentElement.scrollHeight - window.innerHeight;
+                const scrolled = (winScroll / height) * 100;
+                bar.style.height = scrolled + '%';
+            });
+        }
+
+        
+        function initDynamicGreeting() {
+            
+            const greetingEle = document.getElementById('dynamic-greeting');
+            if (!greetingEle) return;
+
+            const hour = new Date().getHours();
+            let greeting = "你好";
+            let icon = "👋";
+
+            if (hour >= 5 && hour < 11) {
+                greeting = "早上好";
+                icon = "🌅";
+            } else if (hour >= 11 && hour < 14) {
+                greeting = "中午好";
+                icon = "☀️";
+            } else if (hour >= 14 && hour < 18) {
+                greeting = "下午好";
+                icon = "☕";
+            } else if (hour >= 18 && hour < 23) {
+                greeting = "晚上好";
+                icon = "🌙";
+            } else {
+                greeting = "夜深了，注意休息";
+                icon = "🦉";
+            }
+
+            
+            greetingEle.style.opacity = '0';
+            setTimeout(() => {
+                greetingEle.innerText = `${greeting}，我是 QIZHI ${icon}`;
+                greetingEle.style.opacity = '1';
+                greetingEle.style.transition = 'opacity 0.5s ease';
+            }, 100);
+        }
+
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            initTOC();
+            initBackToTop();
+            initCopyButtons();
+            initScrollProgress();
+            initDynamicGreeting();
+        });
+    })();
 </script>
 
 <script>

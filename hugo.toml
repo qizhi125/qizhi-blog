@@ -35,7 +35,7 @@ theme = 'PaperMod'
     Content = """
 <img src="/image/avatar.png" alt="avatar" style="width:120px;height:120px;border-radius:50%;margin:0 auto 1rem auto;box-shadow: 0 4px 10px rgba(0,0,0,0.1);display:block;">
 
-<h1 style="font-size: 2rem; margin-bottom: 0.5rem;">QIZHI</h1>
+<h1 id="dynamic-greeting" style="font-size: 2rem; margin-bottom: 0.5rem;">QIZHI</h1>
 
 <p style="margin-bottom: 1.5rem; color: var(--secondary);">💻 Linux System Developer | C++ Enthusiast</p>
 
