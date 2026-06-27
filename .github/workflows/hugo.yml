@@ -1,0 +1,61 @@
+name: Deploy Hugo site to Pages
+
+on:
+  push:
+    branches:
+      - main  # 监听 main 分支的 push 事件
+  workflow_dispatch: # 允许在 GitHub 页面上手动触发运行
+
+# 设置 minimal 权限，确保安全性
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 避免并发构建冲突，后一次构建会取消前一次
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive  # 关键：自动递归拉取 PaperMod 主题的 Git Submodule
+          fetch-depth: 0         # 拉取完整历史，便于 Hugo 读取文章的最后修改时间 (.Lastmod)
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: '0.162.1' # 固定版本，确保云端构建与你本地的生产环境完全一致
+          extended: true          # 启用 extended 版本，支持高级 CSS/Sass 编译
+
+      - name: Setup Pages Navigation
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Build with Hugo
+        run: |
+          hugo \
+            --gc \
+            --minify \
+            --baseURL "${{ steps.pages.outputs.base_url }}/"
+
+      - name: Upload Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./public
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
