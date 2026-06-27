@@ -58,14 +58,18 @@
             });
         }
 
-        // ===== 代码块复制按钮 =====
+        // ===== 代码块复制按钮 (SVG 极简图标) =====
+        const COPY_ICON = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+        const CHECK_ICON = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+        const ERROR_ICON = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+
         function initCopyButtons() {
             const pres = document.querySelectorAll('.post-content pre');
             pres.forEach(pre => {
                 if (pre.querySelector('.copy-code-button')) return;
                 const button = document.createElement('button');
                 button.className = 'copy-code-button';
-                button.innerHTML = '📋';
+                button.innerHTML = COPY_ICON;
                 button.setAttribute('aria-label', '复制代码');
                 button.addEventListener('click', async (e) => {
                     e.stopPropagation();
@@ -73,16 +77,16 @@
                     const text = code.innerText;
                     try {
                         await navigator.clipboard.writeText(text);
-                        button.innerHTML = '✓';
+                        button.innerHTML = CHECK_ICON;
                         button.classList.add('copied');
                         setTimeout(() => {
-                            button.innerHTML = '📋';
+                            button.innerHTML = COPY_ICON;
                             button.classList.remove('copied');
                         }, 2000);
                     } catch (err) {
-                        button.innerHTML = '❌';
+                        button.innerHTML = ERROR_ICON;
                         setTimeout(() => {
-                            button.innerHTML = '📋';
+                            button.innerHTML = COPY_ICON;
                         }, 1000);
                     }
                 });
@@ -103,40 +107,39 @@
             });
         }
 
-        // ===== 现代化小功能：首页动态问候语 =====
+        // ===== 打字机风格首页问候语 (无 emoji) =====
         function initDynamicGreeting() {
-            // 找到我们在 hugo.toml 中设置的特定元素
             const greetingEle = document.getElementById('dynamic-greeting');
             if (!greetingEle) return;
 
             const hour = new Date().getHours();
             let greeting = "你好";
-            let icon = "👋";
 
             if (hour >= 5 && hour < 11) {
                 greeting = "早上好";
-                icon = "🌅";
             } else if (hour >= 11 && hour < 14) {
                 greeting = "中午好";
-                icon = "☀️";
             } else if (hour >= 14 && hour < 18) {
                 greeting = "下午好";
-                icon = "☕";
             } else if (hour >= 18 && hour < 23) {
                 greeting = "晚上好";
-                icon = "🌙";
             } else {
                 greeting = "夜深了，注意休息";
-                icon = "🦉";
             }
 
-            // 渐变动画替换文字
-            greetingEle.style.opacity = '0';
-            setTimeout(() => {
-                greetingEle.innerText = `${greeting}，我是 QIZHI ${icon}`;
-                greetingEle.style.opacity = '1';
-                greetingEle.style.transition = 'opacity 0.5s ease';
-            }, 100);
+            // 打字机逐字出现效果
+            const fullText = `${greeting}，我是 QIZHI`;
+            let charIndex = 0;
+            greetingEle.innerText = '';
+            greetingEle.style.opacity = '1';
+
+            const typeTimer = setInterval(() => {
+                greetingEle.innerText = fullText.slice(0, charIndex + 1);
+                charIndex++;
+                if (charIndex >= fullText.length) {
+                    clearInterval(typeTimer);
+                }
+            }, 80);
         }
 
         // 执行初始化
