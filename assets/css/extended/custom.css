@@ -492,6 +492,31 @@ html:root .post-content pre:hover {
         color: var(--primary);
         text-decoration: none;
     }
+
+    /* 首页 SKILLS：标签在上、值在下，长文本自动换行 */
+    .sidebar-item--stack {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+        padding: 8px 0;
+    }
+    .sidebar-item--stack .sidebar-label {
+        font-size: 10px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+    }
+    .sidebar-item--stack .sidebar-value {
+        font-size: 11px;
+        line-height: 1.5;
+        white-space: normal;
+        word-break: break-word;
+    }
+
+    /* 首页 Sidebar：内容紧凑时高度自适应 */
+    .sidebar.is-home {
+        max-height: none;
+        overflow-y: visible;
+    }
 }
 
 /* ============================================
