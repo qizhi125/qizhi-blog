@@ -87,6 +87,9 @@ theme = 'PaperMod'
     [markup.goldmark]
         [markup.goldmark.renderer]
             unsafe = true
+        [markup.goldmark.extensions]
+            [markup.goldmark.extensions.diagram]
+                enable = true
 
     [markup.tableOfContents]
         startLevel = 2

@@ -4,7 +4,7 @@
     (function() {
         // ===== TOC 折叠箭头功能 =====
         function initTOC() {
-            if (window.innerWidth < 1300) return;
+            if (window.innerWidth < 1200) return;
             const toc = document.querySelector('.toc');
             if (!toc) return;
 
@@ -95,7 +95,7 @@
             });
         }
 
-        // ===== 右侧滚动进度条 =====
+        // ===== 顶部水平进度条 (宽度百分比驱动) =====
         function initScrollProgress() {
             const bar = document.getElementById('scroll-progress-bar');
             if (!bar) return;
@@ -103,7 +103,7 @@
                 const winScroll = document.documentElement.scrollTop;
                 const height = document.documentElement.scrollHeight - window.innerHeight;
                 const scrolled = (winScroll / height) * 100;
-                bar.style.height = scrolled + '%';
+                bar.style.width = scrolled + '%';
             });
         }
 
@@ -142,16 +142,138 @@
             }, 80);
         }
 
+        // ===== 三栏 Grid 布局：TOC + Main + Sidebar =====
+        function initLayoutWrapper() {
+            const main = document.querySelector('.main');
+            if (!main) return;
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'layout-wrapper';
+
+            // 提取 TOC（PaperMod 将 .toc 渲染在文章内容中）
+            const toc = document.querySelector('.toc');
+            if (toc) {
+                wrapper.classList.add('has-toc');
+                toc.remove();
+                wrapper.appendChild(toc);
+            }
+
+            // 将 .main 移入 grid 容器
+            main.parentNode.insertBefore(wrapper, main);
+            wrapper.appendChild(main);
+
+            // 创建右侧栏
+            const sidebar = createSidebar();
+            wrapper.appendChild(sidebar);
+        }
+
+        // ===== 右侧栏 Sidebar：元数据 + Busuanzi 统计 =====
+        function createSidebar() {
+            const sidebar = document.createElement('aside');
+            sidebar.className = 'sidebar';
+
+            // 提取文章元数据
+            const postMeta = document.querySelector('.post-meta');
+            let readingTime = '';
+            let postDate = '';
+
+            if (postMeta) {
+                const text = postMeta.textContent || '';
+                const timeMatch = text.match(/(\d+)\s*min/);
+                if (timeMatch) readingTime = timeMatch[0];
+
+                const dateEl = postMeta.querySelector('time');
+                if (dateEl) {
+                    postDate = dateEl.textContent.trim() || dateEl.getAttribute('datetime') || '';
+                } else {
+                    // fallback: 尝试从非 time 元素中提取日期
+                    const dateMatch = text.match(/(\d{4}[-/]\d{1,2}[-/]\d{1,2})/);
+                    if (dateMatch) postDate = dateMatch[1];
+                }
+            }
+
+            const hasMeta = readingTime || postDate;
+
+            sidebar.innerHTML =
+                '<div class="sidebar-section">' +
+                    '<h3 class="sidebar-title">文章信息</h3>' +
+                    (hasMeta
+                        ? (readingTime ? '<div class="sidebar-item"><span class="sidebar-label">阅读时长</span><span class="sidebar-value">' + readingTime + '</span></div>' : '') +
+                          (postDate ? '<div class="sidebar-item"><span class="sidebar-label">发布日期</span><span class="sidebar-value">' + postDate + '</span></div>' : '')
+                        : '<div class="sidebar-item"><span class="sidebar-value" style="opacity:0.5">—</span></div>') +
+                '</div>' +
+                '<div class="sidebar-section">' +
+                    '<h3 class="sidebar-title">站点统计</h3>' +
+                    '<div class="sidebar-item">' +
+                        '<span class="sidebar-label">总访问量</span>' +
+                        '<span class="sidebar-value" id="busuanzi_container_site_uv">' +
+                            '<span id="busuanzi_value_site_uv">—</span>&nbsp;次' +
+                        '</span>' +
+                    '</div>' +
+                    '<div class="sidebar-item">' +
+                        '<span class="sidebar-label">本页阅读</span>' +
+                        '<span class="sidebar-value" id="busuanzi_container_page_pv">' +
+                            '<span id="busuanzi_value_page_pv">—</span>&nbsp;次' +
+                        '</span>' +
+                    '</div>' +
+                '</div>';
+
+            return sidebar;
+        }
+
+        // ===== Mermaid 图表：CDN 加载 + 深浅色自动切换 =====
+        function initMermaid() {
+            // 仅在有 mermaid 代码块时加载
+            const mermaidBlocks = document.querySelectorAll('pre.mermaid, code.language-mermaid, .mermaid');
+            if (mermaidBlocks.length === 0) return;
+
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js';
+            script.async = true;
+            script.onload = function () {
+                const isDark = document.documentElement.getAttribute('data-theme') === 'dark' ||
+                               (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+                mermaid.initialize({
+                    startOnLoad: true,
+                    theme: isDark ? 'dark' : 'default',
+                    securityLevel: 'loose',
+                });
+
+                // 监听深浅色切换，自动重绘
+                const themeObserver = new MutationObserver(function () {
+                    const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+                    mermaid.initialize({
+                        startOnLoad: false,
+                        theme: dark ? 'dark' : 'default',
+                        securityLevel: 'loose',
+                    });
+                    // 重新渲染页面上的所有 mermaid 图表
+                    try { mermaid.run(); } catch (e) { /* ignore */ }
+                });
+                themeObserver.observe(document.documentElement, {
+                    attributes: true,
+                    attributeFilter: ['data-theme'],
+                });
+            };
+            document.head.appendChild(script);
+        }
+
         // 执行初始化
         document.addEventListener('DOMContentLoaded', () => {
+            initLayoutWrapper();
             initTOC();
             initBackToTop();
             initCopyButtons();
             initScrollProgress();
             initDynamicGreeting();
+            initMermaid();
         });
     })();
 </script>
+
+<!-- Busuanzi 站点统计 -->
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 <!-- IntersectionObserver: TOC 滚动高亮联动 -->
 <script>
