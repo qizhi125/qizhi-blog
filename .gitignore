@@ -1,0 +1,15 @@
+# Hugo 构建产物及缓存
+/public/
+/resources/_gen/
+/resources/_custom/
+.hugo_build.lock
+
+# IDE / 编辑器配置
+/.idea/
+/.vscode/
+*.swp
+*~
+
+# 操作系统缓存文件
+.DS_Store
+Thumbs.db
