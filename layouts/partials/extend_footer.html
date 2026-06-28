@@ -167,16 +167,20 @@
             wrapper.appendChild(sidebar);
         }
 
-        // ===== 右侧栏 Sidebar：首页 SKILLS / 文章页元数据 + Busuanzi =====
+        // ===== 右侧栏 Sidebar：三路分支（首页 / 文章页 / 列表页）=====
         function createSidebar() {
-            const sidebar = document.createElement('aside');
+            var sidebar = document.createElement('aside');
             sidebar.className = 'sidebar';
 
-            // 检测首页：PaperMod 在首页渲染 .first-entry 或 .home-info
-            const isHome = !!(document.querySelector('.first-entry, .home-info'));
+            // 可靠的 URL 路径判断
+            var path = (window.location.pathname || '').replace(/\/+$/, '') || '/';
+            var isHome = path === '/' || path === '/index.html';
+
+            // 文章页判断：存在 .post-meta 即表示单篇文章
+            var hasPostMeta = !!document.querySelector('.post-meta');
 
             if (isHome) {
-                // ── 首页：个人技术栈 + 仅总访问量 ──
+                // ── 分支 1：首页 → SKILLS + 仅总访问量 ──
                 sidebar.classList.add('is-home');
                 sidebar.innerHTML =
                     '<div class="sidebar-section">' +
@@ -203,36 +207,52 @@
                             '</span>' +
                         '</div>' +
                     '</div>';
-            } else {
-                // ── 文章/列表页：元数据 + 完整站点统计 ──
-                const postMeta = document.querySelector('.post-meta');
-                let readingTime = '';
-                let postDate = '';
+
+            } else if (hasPostMeta) {
+                // ── 分支 2：文章页 → 元数据 + 总访问量 + 本页阅读 ──
+                var postMeta = document.querySelector('.post-meta');
+                var readingTime = '';
+                var postDate = '';
 
                 if (postMeta) {
-                    const text = postMeta.textContent || '';
-                    const timeMatch = text.match(/(\d+)\s*min/);
+                    var text = postMeta.textContent || '';
+                    var timeMatch = text.match(/(\d+)\s*min/);
                     if (timeMatch) readingTime = timeMatch[0];
 
-                    const dateEl = postMeta.querySelector('time');
+                    var dateEl = postMeta.querySelector('time');
                     if (dateEl) {
                         postDate = dateEl.textContent.trim() || dateEl.getAttribute('datetime') || '';
                     } else {
-                        const dateMatch = text.match(/(\d{4}[-/]\d{1,2}[-/]\d{1,2})/);
+                        var dateMatch = text.match(/(\d{4}[-/]\d{1,2}[-/]\d{1,2})/);
                         if (dateMatch) postDate = dateMatch[1];
                     }
                 }
 
-                const hasMeta = readingTime || postDate;
-
                 sidebar.innerHTML =
                     '<div class="sidebar-section">' +
                         '<h3 class="sidebar-title">文章信息</h3>' +
-                        (hasMeta
-                            ? (readingTime ? '<div class="sidebar-item"><span class="sidebar-label">阅读时长</span><span class="sidebar-value">' + readingTime + '</span></div>' : '') +
-                              (postDate ? '<div class="sidebar-item"><span class="sidebar-label">发布日期</span><span class="sidebar-value">' + postDate + '</span></div>' : '')
-                            : '<div class="sidebar-item"><span class="sidebar-value" style="opacity:0.5">—</span></div>') +
+                        (readingTime ? '<div class="sidebar-item"><span class="sidebar-label">阅读时长</span><span class="sidebar-value">' + readingTime + '</span></div>' : '') +
+                        (postDate ? '<div class="sidebar-item"><span class="sidebar-label">发布日期</span><span class="sidebar-value">' + postDate + '</span></div>' : '') +
                     '</div>' +
+                    '<div class="sidebar-section">' +
+                        '<h3 class="sidebar-title">站点统计</h3>' +
+                        '<div class="sidebar-item">' +
+                            '<span class="sidebar-label">总访问量</span>' +
+                            '<span class="sidebar-value" id="busuanzi_container_site_uv">' +
+                                '<span id="busuanzi_value_site_uv">—</span>&nbsp;次' +
+                            '</span>' +
+                        '</div>' +
+                        '<div class="sidebar-item">' +
+                            '<span class="sidebar-label">本页阅读</span>' +
+                            '<span class="sidebar-value" id="busuanzi_container_page_pv">' +
+                                '<span id="busuanzi_value_page_pv">—</span>&nbsp;次' +
+                            '</span>' +
+                        '</div>' +
+                    '</div>';
+
+            } else {
+                // ── 分支 3：归档/标签/搜索等列表页 → 仅站点统计，无文章信息卡片 ──
+                sidebar.innerHTML =
                     '<div class="sidebar-section">' +
                         '<h3 class="sidebar-title">站点统计</h3>' +
                         '<div class="sidebar-item">' +
