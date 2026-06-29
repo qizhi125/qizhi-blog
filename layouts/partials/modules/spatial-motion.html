@@ -1,0 +1,97 @@
+        function initSpatialUI() {
+            // 触屏设备降级：不执行粒子与磁吸
+            if (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) return;
+
+            var spatial = document.getElementById('home-spatial');
+            if (!spatial) return;
+
+            // ── A. Canvas 星尘粒子引擎 ──
+            var canvas = document.getElementById('particle-canvas');
+            if (canvas) {
+                var ctx = canvas.getContext('2d');
+                var width = canvas.width = window.innerWidth;
+                var height = canvas.height = window.innerHeight;
+
+                // 从 CSS 变量读取当前主题主色，转换为 rgba 分量
+                var style = getComputedStyle(document.documentElement);
+                var primaryRgb = style.getPropertyValue('--primary-rgb').trim() || '42, 157, 143';
+
+                window.addEventListener('resize', function () {
+                    width = canvas.width = window.innerWidth;
+                    height = canvas.height = window.innerHeight;
+                });
+
+                var MAX_PARTICLES = 80;
+                var particles = [];
+                var mouseX = width / 2, mouseY = height / 2;
+
+                document.addEventListener('mousemove', function (e) {
+                    mouseX = e.clientX;
+                    mouseY = e.clientY;
+                    // 在光标右下角 +15px 生成粒子
+                    particles.push({
+                        x: mouseX + 15,
+                        y: mouseY + 15,
+                        vx: (Math.random() - 0.5) * 1.5,
+                        vy: (Math.random() - 0.5) * 1.5,
+                        life: 1,
+                        size: Math.random() * 2.5 + 1
+                    });
+                    // 有界队列：超出上限则剔除最旧粒子，锁定 GPU 渲染与内存上限
+                    while (particles.length > MAX_PARTICLES) {
+                        particles.shift();
+                    }
+                }, { passive: true });
+
+                (function render() {
+                    ctx.clearRect(0, 0, width, height);
+                    for (var i = 0; i < particles.length; i++) {
+                        var p = particles[i];
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        p.life -= 0.02;  // 衰减
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                        ctx.fillStyle = 'rgba(' + primaryRgb + ', ' + Math.max(0, p.life).toFixed(3) + ')';
+                        ctx.fill();
+                        if (p.life <= 0) {
+                            particles.splice(i, 1);
+                            i--;
+                        }
+                    }
+                    requestAnimationFrame(render);
+                })();
+            }
+
+            // ── B. 磁性吸附 (操作内层 .home-bubble，像素偏移，不触碰 wrapper 动画) ──
+            var bubbles = spatial.querySelectorAll('[data-magnetic]');
+
+            bubbles.forEach(function (bubble) {
+                bubble.addEventListener('mouseenter', function () {
+                    // 暂停外层 wrapper 的 CSS 动画
+                    var wrapper = bubble.parentElement;
+                    if (wrapper && wrapper.classList.contains('bubble-orbit-wrapper')) {
+                        wrapper.style.animationPlayState = 'paused';
+                    }
+                });
+                bubble.addEventListener('mousemove', function (e) {
+                    var rect = bubble.getBoundingClientRect();
+                    var dx = e.clientX - rect.left - rect.width / 2;
+                    var dy = e.clientY - rect.top - rect.height / 2;
+                    // 像素级偏移，不覆盖 wrapper 的动画 transform
+                    var tx = dx * 0.25;
+                    var ty = dy * 0.25;
+                    bubble.style.transition = 'transform 0.15s ease-out';
+                    bubble.style.transform = 'translate(' + tx + 'px, ' + ty + 'px) scale(1.1)';
+                });
+                bubble.addEventListener('mouseleave', function () {
+                    bubble.style.transition = 'transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                    bubble.style.transform = 'translate(0, 0) scale(1)';
+                    // 恢复外层 wrapper 的 CSS 动画
+                    var wrapper = bubble.parentElement;
+                    if (wrapper && wrapper.classList.contains('bubble-orbit-wrapper')) {
+                        wrapper.style.animationPlayState = 'running';
+                    }
+                });
+            });
+        }

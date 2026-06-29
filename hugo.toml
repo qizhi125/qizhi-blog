@@ -1,5 +1,5 @@
 baseURL = 'https://qizhi1215.com/'
-languageCode = 'zh-cn'
+locale = 'zh-cn'
 title = 'QIZHI Tech Blog'
 theme = 'PaperMod'
 
@@ -59,6 +59,10 @@ theme = 'PaperMod'
     [[params.socialIcons]]
     name = "email"
     url = "mailto:qizhi1215w@gmail.com"
+
+    # 📊 Cloudflare Web Analytics
+    [params.analytics]
+        cfToken = "d446841fae0647398d6149b7bccb0050"
 
 # 🧭 顶部导航栏菜单
 [menu]

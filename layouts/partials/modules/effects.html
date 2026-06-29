@@ -1,0 +1,73 @@
+        // ===== 打字机风格首页问候语 (数据驱动) =====
+        function initDynamicGreeting() {
+            var greetingEle = document.getElementById('dynamic-greeting');
+            if (!greetingEle) return;
+
+            var hour = new Date().getHours();
+            var g = uiData.home.greeting;
+            var greeting = g.default;
+
+            if (hour >= 5 && hour < 11) {
+                greeting = g.morning;
+            } else if (hour >= 11 && hour < 14) {
+                greeting = g.noon;
+            } else if (hour >= 14 && hour < 18) {
+                greeting = g.afternoon;
+            } else if (hour >= 18 && hour < 23) {
+                greeting = g.evening;
+            } else {
+                greeting = g.night;
+            }
+
+            // 打字机逐字出现效果
+            var fullText = greeting + g.suffix;
+            var charIndex = 0;
+            greetingEle.innerText = '';
+            greetingEle.style.opacity = '1';
+
+            var typeTimer = setInterval(function () {
+                greetingEle.innerText = fullText.slice(0, charIndex + 1);
+                charIndex++;
+                if (charIndex >= fullText.length) {
+                    clearInterval(typeTimer);
+                }
+            }, 80);
+        }
+
+        // ===== Mermaid 图表：CDN 加载 + 深浅色自动切换 =====
+        function initMermaid() {
+            // 仅在有 mermaid 代码块时加载
+            var mermaidBlocks = document.querySelectorAll('pre.mermaid, code.language-mermaid, .mermaid');
+            if (mermaidBlocks.length === 0) return;
+
+            var script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js';
+            script.async = true;
+            script.onload = function () {
+                var isDark = document.documentElement.getAttribute('data-theme') === 'dark' ||
+                               (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+                mermaid.initialize({
+                    startOnLoad: true,
+                    theme: isDark ? 'dark' : 'default',
+                    securityLevel: 'strict',
+                });
+
+                // 监听深浅色切换，自动重绘
+                var themeObserver = new MutationObserver(function () {
+                    var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+                    mermaid.initialize({
+                        startOnLoad: false,
+                        theme: dark ? 'dark' : 'default',
+                        securityLevel: 'strict',
+                    });
+                    // 重新渲染页面上的所有 mermaid 图表
+                    try { mermaid.run(); } catch (e) { /* ignore */ }
+                });
+                themeObserver.observe(document.documentElement, {
+                    attributes: true,
+                    attributeFilter: ['data-theme'],
+                });
+            };
+            document.head.appendChild(script);
+        }

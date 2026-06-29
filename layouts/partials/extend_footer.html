@@ -2,42 +2,11 @@
 
 <script>
     (function() {
+        // ===== UI 数据注入：将 Hugo data/ui.yaml 注入 JS 运行时 =====
+        var uiData = {{ hugo.Data.ui | jsonify | safeJS }};
+
         // ===== TOC 折叠箭头功能 =====
-        function initTOC() {
-            if (window.innerWidth < 1200) return;
-            const toc = document.querySelector('.toc');
-            if (!toc) return;
-
-            const listItems = toc.querySelectorAll('li');
-            listItems.forEach(li => {
-                const childUl = li.querySelector('ul');
-                if (childUl) {
-                    const btn = document.createElement('span');
-                    btn.className = 'toc-arrow';
-                    btn.innerText = '▶';
-                    li.insertBefore(btn, li.firstChild);
-                    btn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        li.classList.toggle('is-active');
-                    });
-                } else {
-                    const spacer = document.createElement('span');
-                    spacer.className = 'toc-arrow';
-                    spacer.style.visibility = 'hidden';
-                    spacer.innerText = '▶';
-                    li.insertBefore(spacer, li.firstChild);
-                }
-            });
-
-            const activeLink = toc.querySelector('a[href="' + location.hash + '"]');
-            if (activeLink) {
-                let parentLi = activeLink.closest('li');
-                while (parentLi) {
-                    parentLi.classList.add('is-active');
-                    parentLi = parentLi.parentElement.closest('li');
-                }
-            }
-        }
+        {{ partial "modules/toc.html" . }}
 
         // ===== 返回顶部按钮 =====
         function initBackToTop() {
@@ -59,41 +28,7 @@
         }
 
         // ===== 代码块复制按钮 (SVG 极简图标) =====
-        const COPY_ICON = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
-        const CHECK_ICON = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
-        const ERROR_ICON = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
-
-        function initCopyButtons() {
-            const pres = document.querySelectorAll('.post-content pre');
-            pres.forEach(pre => {
-                if (pre.querySelector('.copy-code-button')) return;
-                const button = document.createElement('button');
-                button.className = 'copy-code-button';
-                button.innerHTML = COPY_ICON;
-                button.setAttribute('aria-label', '复制代码');
-                button.addEventListener('click', async (e) => {
-                    e.stopPropagation();
-                    const code = pre.querySelector('code') || pre;
-                    const text = code.innerText;
-                    try {
-                        await navigator.clipboard.writeText(text);
-                        button.innerHTML = CHECK_ICON;
-                        button.classList.add('copied');
-                        setTimeout(() => {
-                            button.innerHTML = COPY_ICON;
-                            button.classList.remove('copied');
-                        }, 2000);
-                    } catch (err) {
-                        button.innerHTML = ERROR_ICON;
-                        setTimeout(() => {
-                            button.innerHTML = COPY_ICON;
-                        }, 1000);
-                    }
-                });
-                pre.style.position = 'relative';
-                pre.appendChild(button);
-            });
-        }
+        {{ partial "modules/copy-button.html" . }}
 
         // ===== 顶部水平进度条 (宽度百分比驱动) =====
         function initScrollProgress() {
@@ -107,43 +42,14 @@
             });
         }
 
-        // ===== 打字机风格首页问候语 (无 emoji) =====
-        function initDynamicGreeting() {
-            const greetingEle = document.getElementById('dynamic-greeting');
-            if (!greetingEle) return;
-
-            const hour = new Date().getHours();
-            let greeting = "你好";
-
-            if (hour >= 5 && hour < 11) {
-                greeting = "早上好";
-            } else if (hour >= 11 && hour < 14) {
-                greeting = "中午好";
-            } else if (hour >= 14 && hour < 18) {
-                greeting = "下午好";
-            } else if (hour >= 18 && hour < 23) {
-                greeting = "晚上好";
-            } else {
-                greeting = "夜深了，注意休息";
-            }
-
-            // 打字机逐字出现效果
-            const fullText = `${greeting}，我是 QIZHI`;
-            let charIndex = 0;
-            greetingEle.innerText = '';
-            greetingEle.style.opacity = '1';
-
-            const typeTimer = setInterval(() => {
-                greetingEle.innerText = fullText.slice(0, charIndex + 1);
-                charIndex++;
-                if (charIndex >= fullText.length) {
-                    clearInterval(typeTimer);
-                }
-            }, 80);
-        }
+        // ===== 打字机问候语 + 页面特效 (Mermaid) =====
+        {{ partial "modules/effects.html" . }}
 
         // ===== 三栏 Grid 布局：TOC + Main + Sidebar =====
         function initLayoutWrapper() {
+            // 首页：跳过 Grid 包装，Spatial UI 自包含
+            if (document.querySelector('.home-spatial')) return;
+
             const main = document.querySelector('.main');
             if (!main) return;
 
@@ -162,154 +68,20 @@
             main.parentNode.insertBefore(wrapper, main);
             wrapper.appendChild(main);
 
-            // 创建右侧栏
+            // 创建右侧栏（首页不渲染，添加 .no-sidebar 类）
             const sidebar = createSidebar();
-            wrapper.appendChild(sidebar);
-        }
-
-        // ===== 右侧栏 Sidebar：三路分支（首页 / 文章页 / 列表页）=====
-        function createSidebar() {
-            var sidebar = document.createElement('aside');
-            sidebar.className = 'sidebar';
-
-            // 可靠的 URL 路径判断
-            var path = (window.location.pathname || '').replace(/\/+$/, '') || '/';
-            var isHome = path === '/' || path === '/index.html';
-
-            // 文章页判断：存在 .post-meta 即表示单篇文章
-            var hasPostMeta = !!document.querySelector('.post-meta');
-
-            if (isHome) {
-                // ── 分支 1：首页 → SKILLS + 仅总访问量 ──
-                sidebar.classList.add('is-home');
-                sidebar.innerHTML =
-                    '<div class="sidebar-section">' +
-                        '<h3 class="sidebar-title">SKILLS</h3>' +
-                        '<div class="sidebar-item sidebar-item--stack">' +
-                            '<span class="sidebar-label">Languages</span>' +
-                            '<span class="sidebar-value">C++, Go, Python</span>' +
-                        '</div>' +
-                        '<div class="sidebar-item sidebar-item--stack">' +
-                            '<span class="sidebar-label">OS</span>' +
-                            '<span class="sidebar-value">Linux (Fedora)</span>' +
-                        '</div>' +
-                        '<div class="sidebar-item sidebar-item--stack">' +
-                            '<span class="sidebar-label">Focus</span>' +
-                            '<span class="sidebar-value">System Engineering, Network Security, 3D Vision</span>' +
-                        '</div>' +
-                    '</div>' +
-                    '<div class="sidebar-section">' +
-                        '<h3 class="sidebar-title">站点统计</h3>' +
-                        '<div class="sidebar-item">' +
-                            '<span class="sidebar-label">总访问量</span>' +
-                            '<span class="sidebar-value" id="busuanzi_container_site_uv">' +
-                                '<span id="busuanzi_value_site_uv">—</span>&nbsp;次' +
-                            '</span>' +
-                        '</div>' +
-                    '</div>';
-
-            } else if (hasPostMeta) {
-                // ── 分支 2：文章页 → 元数据 + 总访问量 + 本页阅读 ──
-                var postMeta = document.querySelector('.post-meta');
-                var readingTime = '';
-                var postDate = '';
-
-                if (postMeta) {
-                    var text = postMeta.textContent || '';
-                    var timeMatch = text.match(/(\d+)\s*min/);
-                    if (timeMatch) readingTime = timeMatch[0];
-
-                    var dateEl = postMeta.querySelector('time');
-                    if (dateEl) {
-                        postDate = dateEl.textContent.trim() || dateEl.getAttribute('datetime') || '';
-                    } else {
-                        var dateMatch = text.match(/(\d{4}[-/]\d{1,2}[-/]\d{1,2})/);
-                        if (dateMatch) postDate = dateMatch[1];
-                    }
-                }
-
-                sidebar.innerHTML =
-                    '<div class="sidebar-section">' +
-                        '<h3 class="sidebar-title">文章信息</h3>' +
-                        (readingTime ? '<div class="sidebar-item"><span class="sidebar-label">阅读时长</span><span class="sidebar-value">' + readingTime + '</span></div>' : '') +
-                        (postDate ? '<div class="sidebar-item"><span class="sidebar-label">发布日期</span><span class="sidebar-value">' + postDate + '</span></div>' : '') +
-                    '</div>' +
-                    '<div class="sidebar-section">' +
-                        '<h3 class="sidebar-title">站点统计</h3>' +
-                        '<div class="sidebar-item">' +
-                            '<span class="sidebar-label">总访问量</span>' +
-                            '<span class="sidebar-value" id="busuanzi_container_site_uv">' +
-                                '<span id="busuanzi_value_site_uv">—</span>&nbsp;次' +
-                            '</span>' +
-                        '</div>' +
-                        '<div class="sidebar-item">' +
-                            '<span class="sidebar-label">本页阅读</span>' +
-                            '<span class="sidebar-value" id="busuanzi_container_page_pv">' +
-                                '<span id="busuanzi_value_page_pv">—</span>&nbsp;次' +
-                            '</span>' +
-                        '</div>' +
-                    '</div>';
-
+            if (sidebar) {
+                wrapper.appendChild(sidebar);
             } else {
-                // ── 分支 3：归档/标签/搜索等列表页 → 仅站点统计，无文章信息卡片 ──
-                sidebar.innerHTML =
-                    '<div class="sidebar-section">' +
-                        '<h3 class="sidebar-title">站点统计</h3>' +
-                        '<div class="sidebar-item">' +
-                            '<span class="sidebar-label">总访问量</span>' +
-                            '<span class="sidebar-value" id="busuanzi_container_site_uv">' +
-                                '<span id="busuanzi_value_site_uv">—</span>&nbsp;次' +
-                            '</span>' +
-                        '</div>' +
-                        '<div class="sidebar-item">' +
-                            '<span class="sidebar-label">本页阅读</span>' +
-                            '<span class="sidebar-value" id="busuanzi_container_page_pv">' +
-                                '<span id="busuanzi_value_page_pv">—</span>&nbsp;次' +
-                            '</span>' +
-                        '</div>' +
-                    '</div>';
+                wrapper.classList.add('no-sidebar');
             }
-
-            return sidebar;
         }
 
-        // ===== Mermaid 图表：CDN 加载 + 深浅色自动切换 =====
-        function initMermaid() {
-            // 仅在有 mermaid 代码块时加载
-            const mermaidBlocks = document.querySelectorAll('pre.mermaid, code.language-mermaid, .mermaid');
-            if (mermaidBlocks.length === 0) return;
+        // ===== 右侧栏 Sidebar (数据驱动, 独立模块) =====
+        {{ partial "modules/sidebar.html" . }}
 
-            const script = document.createElement('script');
-            script.src = 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js';
-            script.async = true;
-            script.onload = function () {
-                const isDark = document.documentElement.getAttribute('data-theme') === 'dark' ||
-                               (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
-
-                mermaid.initialize({
-                    startOnLoad: true,
-                    theme: isDark ? 'dark' : 'default',
-                    securityLevel: 'loose',
-                });
-
-                // 监听深浅色切换，自动重绘
-                const themeObserver = new MutationObserver(function () {
-                    const dark = document.documentElement.getAttribute('data-theme') === 'dark';
-                    mermaid.initialize({
-                        startOnLoad: false,
-                        theme: dark ? 'dark' : 'default',
-                        securityLevel: 'loose',
-                    });
-                    // 重新渲染页面上的所有 mermaid 图表
-                    try { mermaid.run(); } catch (e) { /* ignore */ }
-                });
-                themeObserver.observe(document.documentElement, {
-                    attributes: true,
-                    attributeFilter: ['data-theme'],
-                });
-            };
-            document.head.appendChild(script);
-        }
+        // ===== 空间悬浮导航 (Spatial UI) — Canvas 粒子 + 磁吸 =====
+        {{ partial "modules/spatial-motion.html" . }}
 
         // 执行初始化
         document.addEventListener('DOMContentLoaded', () => {
@@ -320,24 +92,12 @@
             initScrollProgress();
             initDynamicGreeting();
             initMermaid();
+            initSpatialUI();
         });
     })();
 </script>
 
-<!-- Busuanzi 站点统计 -->
-<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
 <!-- IntersectionObserver: TOC 滚动高亮联动 -->
-<script>
-    window.addEventListener("DOMContentLoaded", () => {
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    document.querySelectorAll(".toc a").forEach(a => a.classList.remove("active"));
-                    document.querySelector(`.toc a[href="#${entry.target.id}"]`)?.classList.add("active");
-                }
-            });
-        }, { rootMargin: "-100px 0px -66% 0px" });
-        document.querySelectorAll(".post-content h1, .post-content h2, .post-content h3").forEach(h => observer.observe(h));
-    });
-</script>
+{{ partial "modules/intersection-observer.html" . }}
+
+{{ partial "modules/cf-analytics.html" . }}

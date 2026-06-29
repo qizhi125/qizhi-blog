@@ -1,0 +1,86 @@
+        // ===== 代码块复制按钮 (SVG 图标 + Tooltip 反馈) =====
+        var COPY_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+        var CHECK_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+        var ERROR_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+
+        function initCopyButtons() {
+            var pres = document.querySelectorAll('.post-content pre');
+            pres.forEach(function (pre) {
+                if (pre.querySelector('.copy-code-button')) return;
+
+                var button = document.createElement('button');
+                button.className = 'copy-code-button';
+                button.innerHTML = COPY_ICON;
+                button.setAttribute('aria-label', '复制代码');
+                button.setAttribute('title', '复制代码');
+
+                // 动态注入 tooltip 文本元素
+                var tooltip = document.createElement('span');
+                tooltip.className = 'copy-tooltip';
+                tooltip.textContent = '复制';
+                button.appendChild(tooltip);
+
+                button.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    var code = pre.querySelector('code') || pre;
+                    var text = code.innerText || '';
+
+                    var done = function (ok) {
+                        if (ok) {
+                            button.innerHTML = '';
+                            button.appendChild(tooltip);
+                            button.innerHTML = CHECK_ICON;
+                            button.appendChild(tooltip);
+                            button.classList.add('copied');
+                            tooltip.textContent = '已复制';
+                            setTimeout(function () {
+                                button.innerHTML = COPY_ICON;
+                                button.appendChild(tooltip);
+                                button.classList.remove('copied');
+                                tooltip.textContent = '复制';
+                            }, 2000);
+                        } else {
+                            button.innerHTML = ERROR_ICON;
+                            button.appendChild(tooltip);
+                            tooltip.textContent = '失败';
+                            setTimeout(function () {
+                                button.innerHTML = COPY_ICON;
+                                button.appendChild(tooltip);
+                                tooltip.textContent = '复制';
+                            }, 1500);
+                        }
+                    };
+
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText(text).then(function () {
+                            done(true);
+                        }).catch(function () {
+                            // clipboard API 失败，回退 execCommand
+                            fallbackCopy(text, done);
+                        });
+                    } else {
+                        fallbackCopy(text, done);
+                    }
+                });
+
+                pre.style.position = 'relative';
+                pre.appendChild(button);
+            });
+        }
+
+        // ===== clipboard API 不可用时的回退方案 =====
+        function fallbackCopy(text, done) {
+            var textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                var ok = document.execCommand('copy');
+                done(ok);
+            } catch (e) {
+                done(false);
+            }
+            document.body.removeChild(textarea);
+        }

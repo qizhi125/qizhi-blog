@@ -1,0 +1,15 @@
+
+<!-- IntersectionObserver: TOC 滚动高亮联动 -->
+<script>
+    window.addEventListener("DOMContentLoaded", () => {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    document.querySelectorAll(".toc a").forEach(a => a.classList.remove("active"));
+                    document.querySelector(`.toc a[href="#${entry.target.id}"]`)?.classList.add("active");
+                }
+            });
+        }, { rootMargin: "-100px 0px -66% 0px" });
+        document.querySelectorAll(".post-content h1, .post-content h2, .post-content h3").forEach(h => observer.observe(h));
+    });
+</script>

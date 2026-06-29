@@ -1,0 +1,36 @@
+        function initTOC() {
+            if (window.innerWidth < 1200) return;
+            const toc = document.querySelector('.toc');
+            if (!toc) return;
+
+            const listItems = toc.querySelectorAll('li');
+            listItems.forEach(li => {
+                const childUl = li.querySelector('ul');
+                if (childUl) {
+                    const btn = document.createElement('span');
+                    btn.className = 'toc-arrow';
+                    btn.innerText = '▶';
+                    li.insertBefore(btn, li.firstChild);
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        li.classList.toggle('is-active');
+                    });
+                } else {
+                    const spacer = document.createElement('span');
+                    spacer.className = 'toc-arrow';
+                    spacer.style.visibility = 'hidden';
+                    spacer.innerText = '▶';
+                    li.insertBefore(spacer, li.firstChild);
+                }
+            });
+
+            const activeLink = toc.querySelector('a[href="' + location.hash + '"]');
+            if (activeLink) {
+                let parentLi = activeLink.closest('li');
+                while (parentLi) {
+                    parentLi.classList.add('is-active');
+                    parentLi = parentLi.parentElement.closest('li');
+                }
+            }
+        }
+

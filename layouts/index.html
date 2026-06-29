@@ -1,0 +1,32 @@
+{{- define "main" }}
+{{- if .IsHome }}
+<div class="home-spatial" id="home-spatial">
+    <!-- 粒子 Canvas (星尘层) -->
+    <canvas id="particle-canvas" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0;"></canvas>
+
+    <!-- 中心核心：头像 + 打字机问候 -->
+    <div class="home-core">
+        <img src="/image/avatar.png" alt="{{ hugo.Data.ui.home.avatarAlt }}" class="home-avatar">
+        <h1 id="dynamic-greeting">{{ hugo.Data.ui.home.greetingHeading }}</h1>
+        <p class="home-subtitle">{{ hugo.Data.ui.home.subtitle }}</p>
+        <p class="home-skills">{{ hugo.Data.ui.home.skills | safeHTML }}</p>
+    </div>
+
+    <!-- 四角玻璃气泡 (数据驱动，外层轨道 + 内层磁吸) -->
+    {{- range hugo.Data.ui.home.bubbles }}
+    <div class="bubble-orbit-wrapper">
+        <a class="home-bubble" href="{{ .href }}" data-magnetic>
+            {{ partial "modules/bubble-icon.html" .key }}
+            <span class="home-bubble-label">{{ .label }}</span>
+            <span class="home-bubble-desc">{{ .desc }}</span>
+        </a>
+    </div>
+    {{- end }}
+
+    <!-- 底部胶囊 -->
+    <div class="home-capsule">
+        <span>{{ hugo.Data.ui.home.capsule }}</span>
+    </div>
+</div>
+{{- end }}
+{{- end }}

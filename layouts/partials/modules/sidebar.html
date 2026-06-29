@@ -1,0 +1,51 @@
+        // ===== 右侧栏 Sidebar：三路分支（首页 / 文章页 / 列表页）=====
+        function createSidebar() {
+            var sidebar = document.createElement('aside');
+            sidebar.className = 'sidebar';
+
+            // 可靠的 URL 路径判断
+            var path = (window.location.pathname || '').replace(/\/+$/, '') || '/';
+            var isHome = path === '/' || path === '/index.html';
+
+            // 文章页判断：存在 .post-meta 即表示单篇文章
+            var hasPostMeta = !!document.querySelector('.post-meta');
+
+            if (isHome) {
+                // ── 分支 1：首页 → 不渲染 Sidebar ──
+                return null;
+
+            } else if (hasPostMeta) {
+                // ── 分支 2：文章页 → 元数据 ──
+                var postMeta = document.querySelector('.post-meta');
+                var readingTime = '';
+                var postDate = '';
+
+                if (postMeta) {
+                    var text = postMeta.textContent || '';
+                    var timeMatch = text.match(/(\d+)\s*min/);
+                    if (timeMatch) readingTime = timeMatch[0];
+
+                    var dateEl = postMeta.querySelector('time');
+                    if (dateEl) {
+                        postDate = dateEl.textContent.trim() || dateEl.getAttribute('datetime') || '';
+                    } else {
+                        var dateMatch = text.match(/(\d{4}[-/]\d{1,2}[-/]\d{1,2})/);
+                        if (dateMatch) postDate = dateMatch[1];
+                    }
+                }
+
+                var s = uiData.sidebar;
+                sidebar.innerHTML =
+                    '<div class="sidebar-section">' +
+                        '<h3 class="sidebar-title">' + s.articleTitle + '</h3>' +
+                        (readingTime ? '<div class="sidebar-item"><span class="sidebar-label">' + s.readingTime + '</span><span class="sidebar-value">' + readingTime + '</span></div>' : '') +
+                        (postDate ? '<div class="sidebar-item"><span class="sidebar-label">' + s.publishDate + '</span><span class="sidebar-value">' + postDate + '</span></div>' : '') +
+                    '</div>';
+
+            } else {
+                // ── 分支 3：归档/标签/搜索等列表页 → 不渲染 Sidebar ──
+                return null;
+            }
+
+            return sidebar;
+        }
